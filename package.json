@@ -1,0 +1,47 @@
+{
+  "name": "tickets",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "serve": "vue-cli-service serve",
+    "build": "vue-cli-service build",
+    "lint": "vue-cli-service lint"
+  },
+  "dependencies": {
+    "@babel/polyfill": "^7.4.4",
+    "@fortawesome/fontawesome-free": "^5.8.2",
+    "axios": "^1.11.0",
+    "core-js": "^3.6.5",
+    "firebase": "^8.10.1",
+    "moment": "^2.29.1",
+    "pdf2json": "^3.2.0",
+    "pdfjs-dist": "^5.4.54",
+    "pspdfkit": "^2024.8.2",
+    "roboto-fontface": "*",
+    "vue": "^2.6.11",
+    "vue-chat-scroll": "^1.4.0",
+    "vue-dragscroll": "^2.1.0",
+    "vue-pdf": "^4.3.0",
+    "vue-router": "^3.2.0",
+    "vue-spinner": "^1.0.4",
+    "vue-uuid": "^2.0.2",
+    "vuedraggable": "^2.24.3",
+    "vuelidate": "^0.7.6",
+    "vuetify": "^2.2.11",
+    "vuex": "^3.4.0"
+  },
+  "devDependencies": {
+    "@vue/cli-plugin-babel": "~4.5.0",
+    "@vue/cli-plugin-router": "~4.5.0",
+    "@vue/cli-plugin-vuex": "~4.5.0",
+    "@vue/cli-service": "~4.5.0",
+    "vue-cli-plugin-vuetify": "~2.0.7",
+    "vue-template-compiler": "^2.6.11"
+  },
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "not dead",
+    "not ie <= 10"
+  ]
+}
