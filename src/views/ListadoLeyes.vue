@@ -1,7 +1,6 @@
 <template>
     <v-layout>
         <v-flex>
-            <!-- <MenuEquipos /> -->
             <div class="mt-4">
                 <h1>Todas las leyes</h1>
                 <v-card>
@@ -33,7 +32,6 @@
 
 <script>
 import { mapActions, mapState } from "vuex"
-import MenuEquipos from '@/components/MenuEquipos'
 
 export default {
     name: 'ListadoLeyes',
@@ -57,7 +55,6 @@ export default {
       }
     },
     components: {
-        MenuEquipos
     },
     computed: {
         ...mapState(['listadoleyes'])

@@ -65,11 +65,11 @@ export default {
         ...mapState(['leyes','tablero','carga'])
     },
     methods: {
-        ...mapActions(['getLeyesLegislacion','getTablero'])
+        ...mapActions(['getLeyesLegislacion','getEmpresa'])
     },
     created() {
         this.getLeyesLegislacion(this.$route.params.id)
-        this.getTablero(this.$route.params.id)
+        this.getEmpresa(this.$route.params.id)
     }
 }
 </script>

@@ -2,7 +2,7 @@
   <v-layout>
       <v-flex>
           <div class="ml-5 contain-crearCasos">
-            <v-row>
+            <!-- <v-row>
                 <v-col cols="12" md="12">
                     <v-btn :disabled="savingForm ? true : $v.$invalid || carga" :loading="loading" @click.prevent="saveLey" class="btn btn-seondary mt-4 float-right" style="position: relative; top: -15px;" type="submit">
                     Guardar
@@ -11,33 +11,37 @@
                 </v-col>
             </v-row>
             
-            <!-- @submit.prevent="setCaso({nombre, descripcion, usuarioAsignacion: asignacion, prioridad, date, time, tiempoEstimado: tiempoestimado, tablero_id: $route.params.id})" -->
-            <!-- <v-form> -->
-                <v-text-field v-model.trim="nombre" :counter="50" :rules="nameRules" label="Nombre" placeholder="Ingrese un nombre..." required></v-text-field>
+            <v-text-field v-model.trim="nombre" :counter="50" :rules="nameRules" label="Nombre" placeholder="Ingrese un nombre..." required></v-text-field>
 
-                <v-textarea v-model.trim="descripcion" :rules="descripcionRules" :counter="1530" label="Descripción" placeholder="Ingrese una descripción del decreto/ley" required></v-textarea>
+            <v-textarea v-model.trim="descripcion" :rules="descripcionRules" :counter="1530" label="Descripción" placeholder="Ingrese una descripción del decreto/ley" required></v-textarea>
 
-                <v-row>
-                    <v-col cols="12" md="12">
-                        <input type="file" accept="application/pdf" :rules="fileRules" @change="handleFileUpload">
-                    </v-col>
+            <v-row>
+                <v-col cols="12" md="12">
+                    <input type="file" accept="application/pdf" :rules="fileRules" @change="handleFileUpload">
+                    <p v-if="pdfSrc" style="color: #11bf11;">Archivo correctamente cargado</p>
+                </v-col>
 
-                    <v-col cols="12" md="12" v-if="pdfSrc">
-                        <div v-if="numPages > 0" style="margin-top: 10px; text-align: center;">
-                            <button @click="prevPage" :disabled="page <= 1" class="mr-4" :style="page <= 1 ? 'color: #c0c0c0' : ''">⬅ Anterior</button>
-                            <span>Página {{ page }} de {{ numPages }}</span>
-                            <button @click="nextPage" :disabled="page >= numPages" class="ml-4" :style="page >= numPages ? 'color: #c0c0c0' : ''">Siguiente ➡</button>
-                        </div>
+                <v-col cols="12" md="12" v-if="pdfSrc && verArticulo">
+                    <div v-if="numPages > 0" style="margin-top: 10px; text-align: center;">
+                        <button @click="prevPage" :disabled="page <= 1" class="mr-4" :style="page <= 1 ? 'color: #c0c0c0' : ''">⬅ Anterior</button>
+                        <span>Página {{ page }} de {{ numPages }}</span>
+                        <button @click="nextPage" :disabled="page >= numPages" class="ml-4" :style="page >= numPages ? 'color: #c0c0c0' : ''">Siguiente ➡</button>
+                    </div>
 
-                        <pdf
-                            :src="pdfSrc"
-                            :page="page"
-                            @num-pages="numPages = $event"
-                            style="width: 100%; height: 600px;"
-                        />
-                    </v-col>
-                </v-row>
-            <!-- </v-form> -->
+                    <pdf
+                        :src="pdfSrc"
+                        :page="page"
+                        @num-pages="numPages = $event"
+                        style="width: 100%; height: 600px;"
+                    />
+                </v-col>
+            </v-row> -->
+
+            <v-row>
+                <v-col cols="12" md="12">
+                    <repeater-articulos />
+                </v-col>
+            </v-row>
           </div>
       </v-flex>
   </v-layout>
@@ -46,6 +50,7 @@
 <script>
 import { required, maxLength } from 'vuelidate/lib/validators'
 // import * as pdfjsLib from 'pdfjs-dist'
+import RepeaterArticulos from '../components/RepeaterArticulos.vue'
 import pdf from 'vue-pdf'
 import { mapActions, mapState } from "vuex"
 import { db, firebase } from "../firebase";
@@ -53,6 +58,7 @@ import { db, firebase } from "../firebase";
 export default {
     name: 'CrearLey',
     components: {
+        RepeaterArticulos,
         pdf
     },
     data() {
@@ -85,6 +91,7 @@ export default {
             numPages: 0,
             currentPage: 0,
 			pageCount: 0,
+            verArticulo: false,
             savingForm: false
         }
     },
@@ -111,7 +118,7 @@ export default {
         }
     },
     methods: {
-        ...mapActions(['setCaso','getUsuarios']),
+        ...mapActions(['getUsuarios']),
         handleFileUpload(event) {
             const file = event.target.files[0]
             this.filepdfSrc = event.target.files[0]

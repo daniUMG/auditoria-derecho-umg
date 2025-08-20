@@ -23,13 +23,6 @@ export default new Vuex.Store({
     usuarios: [],
     listadoleyes: [],
     leyes: [],
-    procesos: [],
-    subprocesos: [],
-    areas: [],
-    familias: [],
-    subfamilias: [],
-    claves: [],
-    caracteristicas: [],
     grupos: [],
     loading: false
   },
@@ -53,7 +46,7 @@ export default new Vuex.Store({
     setTableros(state, payload){
       state.tableros = payload
     },
-    setTablero(state, payload){
+    setEmpresa(state, payload){
       state.tablero = payload
     },
     setEliminarTablero(state, payload){
@@ -65,9 +58,6 @@ export default new Vuex.Store({
     setCasos(state,payload){
       state.casos = payload
     },
-    setCaso(state,payload){
-      state.caso = payload
-    },
     setUsuarios(state,payload){
       state.usuarios = payload
     },
@@ -76,27 +66,6 @@ export default new Vuex.Store({
     },
     setLeyes(state, payload){
       state.leyes = payload
-    },
-    setProcesos(state, payload){
-      state.procesos = payload
-    },
-    setSubProcesos(state, payload){
-      state.subprocesos = payload
-    },
-    setAreas(state, payload){
-      state.areas = payload
-    },
-    setFamilias(state, payload){
-      state.familias = payload
-    },
-    setSubFamilias(state, payload){
-      state.subfamilias = payload
-    },
-    setClaves(state, payload){
-      state.claves = payload
-    },
-    setCaracteristicas(state, payload){
-      state.caracteristicas = payload
     },
     setGrupos(state, payload){
       state.grupos = payload
@@ -116,23 +85,7 @@ export default new Vuex.Store({
     buscadorCasos({commit, state},payload){
       state.buscadorCasos = payload.toLowerCase()
     },
-    getTableros({commit,state}){
-      commit('cargarFirebase',true)
-      const tableros = []
-      db.collection('tableros').get()
-      .then(res => {
-          res.forEach(doc => {
-              // console.log(doc.id)
-              // console.log(doc.data())
-              let tablero = doc.data()
-              tablero.id = doc.id
-              tableros.push(tablero)
-          })
-          commit('cargarFirebase',false)
-          commit('setTableros', tableros)
-      })
-    },
-    getTablerosUsuarios({commit,state}){
+    getEmpresasUsuario({commit,state}){
       commit('cargarFirebase',true)
       const tableros = []
       
@@ -162,22 +115,23 @@ export default new Vuex.Store({
           commit('setTableros', tableros)
       })
     },
-    getTablero({commit,state},payload){
+    getEmpresa({commit,state},payload){
       db.collection('tableros').doc(payload).get()
       .then(doc => {
           // console.log(doc.data())
           let tablero = doc.data()
           tablero.id = doc.id
           // console.log(tablero);
-          commit('setTablero', tablero)
+          commit('setEmpresa', tablero)
       })
     },
-    setTablero({commit,state},payload){
+    setEmpresa({commit,state},payload){
       commit('cargarFirebase', true)
       commit('setLoading',true)
       db.collection('tableros').add({
         nombre: payload.nombre,
         descripcion: payload.descripcion,
+        region: payload.region,
         tema: payload.tema,
         grupos: payload.grupos,
         date: Date.now(),
@@ -190,12 +144,13 @@ export default new Vuex.Store({
         router.push({name:'Empresas'})
       })
     },
-    editarTablero({commit},payload){
+    editarEmpresa({commit},payload){
       commit('setLoading',true)
       commit('cargarFirebase',true)
       db.collection('tableros').doc(payload.id).update({
           nombre: payload.nombre,
           descripcion: payload.descripcion,
+          region: payload.region,
           tema: payload.tema,
           grupos: payload.grupos
       })
@@ -205,7 +160,7 @@ export default new Vuex.Store({
       .then(doc => {
           let tablero = doc.data()
           tablero.id = doc.id
-          commit('setTablero', tablero)
+          commit('setEmpresa', tablero)
       })
       commit('setLoading',false)
     },
@@ -381,111 +336,10 @@ export default new Vuex.Store({
       // console.log("Document successfully written REALTIME!");
       // commit('nuevoMensaje',msg)
     },
-    eliminarTablero({commit, state}, id){
+    eliminarEmpresa({commit, state}, id){
       db.collection('tableros').doc(id).delete()
       .then(() => {
           commit('setEliminarTablero', id)
-      })
-    },
-    agregarColumna({commit,state}, payload){
-      commit('cargarFirebase',true)
-      db.collection('tableros').doc(payload.tablero_id).collection('columnas').add(payload)
-      .then(doc => {
-          // router.push({name: 'ConfTablero'})
-          commit('cargarFirebase',false)
-      })
-    },
-    getColumnas({commit,state}, payload){
-      commit('cargarFirebase',true)
-      const columnas = []
-      db.collection('tableros').doc(payload).collection('columnas').get()
-      .then(res => {
-          res.forEach(doc => {
-              // console.log(doc.id)
-              // console.log(doc.data())
-              let columna = doc.data()
-              columna.id = doc.id
-              columnas.push(columna)
-              // columnas.push({id: 'cerrado', nombre: 'Cerrado'})
-          })
-          commit('cargarFirebase',false)
-          commit('setColumnas', columnas)
-      })
-    },
-    getCasos({commit,state},payload){
-      commit('setCasos', payload)
-      // commit('cargarFirebase',true)
-      // const casos = []
-      // db.collection('tableros').doc(payload).collection('casos').get()
-      // .then(res => {
-      //     res.forEach(doc => {
-      //         // console.log(doc.id)
-      //         // console.log(doc.data())
-      //         let caso = doc.data()
-      //         caso.id = doc.id
-      //         casos.push(caso)
-      //     })
-      //     commit('cargarFirebase',false)
-      //     commit('setCasos', casos)
-      // })
-    },
-    getCaso({commit},payload){
-      commit('setLoading',true)
-      var casoset
-      db.collection('tableros').doc(payload.idTablero).collection('casos').doc(payload.idCaso).get()
-      .then(doc => {
-          // console.log(doc.data())
-          casoset = doc.data()
-          casoset.id = doc.id
-          commit('setCaso', casoset)
-          commit('setLoading',false)
-      })
-    },
-    setCaso({commit,state}, payload){
-      commit('cargarFirebase',true)
-      commit('setLoading',true)
-      var newPostKey = realtime.ref().child('Casos').push().key
-      console.log(newPostKey);
-      const structCaso = {
-        nombre: payload.nombre,
-        descripcion: payload.descripcion,
-        create_by: state.usuario.nombre,
-        usuarioAsignado: payload.usuarioAsignacion,
-        foto: state.usuario.foto,
-        prioridad: payload.prioridad,
-        fechaEstimada: payload.date+' '+payload.time+':00',
-        tiempoEstimado: payload.tiempoEstimado,
-        columna_id: 'nuevo',
-        category: 'Sin Asignar',
-        sub_category: 'Sin Asignar',
-        proyecto: 'Sin Asignar',
-        sub_proyecto: 'Sin Asignar',
-        id_task: newPostKey,
-        created_at: Date.now(),
-        updated_at: Date.now()
-      }
-
-      db.collection('tableros').doc(payload.tablero_id).collection('casos').doc(newPostKey).set(structCaso)
-
-      // Datos chat
-      const message = 'Se creó el ticket'
-      db.collection('tableros').doc(payload.tablero_id).collection('casos').doc(newPostKey).collection('chat').add({
-        user_name: state.usuario.nombre,
-        message: message,
-        date: Date.now(),
-        hour: Date.now('h:i A'),
-        img: state.usuario.foto,
-        seenBy: [state.usuario.nombre],
-        id_task: newPostKey,
-        uid: state.usuario.uid,
-        type: 'all_question_answered',
-        status_task: 'nuevo'
-      }).catch(error => console.log(error))
-      .then(doc => {
-        // console.log(payload)
-        commit('cargarFirebase',false)
-        commit('setLoading',false)
-        router.push({name:'Tareas', id: payload.tablero_id})
       })
     },
     setMessageCaso({commit}, payload){
@@ -502,103 +356,6 @@ export default new Vuex.Store({
         status_task: 'nuevo'
       }
       db.collection('tableros').doc(payload.idTablero).collection('casos').doc(payload.idCasoDoc).collection('chat').add(msg).catch(error => console.log(error))
-    },
-    editarCasoPrioridad({commit,state},payload){
-      // console.log(payload.idTablero)
-      // console.log(payload.idCasoDoc)
-      db.collection('tableros').doc(payload.idTablero).collection('casos').doc(payload.idCasoDoc).update({
-          prioridad: payload.prioridad
-      })
-      const message = 'se cambió la prioridad a: '+payload.prioridad
-      db.collection('tableros').doc(payload.idTablero).collection('casos').doc(payload.idCasoDoc).collection('chat').add({
-        user_name: state.usuario.nombre,
-        message: message,
-        date: Date.now(),
-        hour: Date.now('h:i A'),
-        img: state.usuario.foto,
-        seenBy: [state.usuario.nombre],
-        id_task: payload.idCasoDoc,
-        uid: state.usuario.uid,
-        type: 'other_actions',
-        status_task: 'nuevo'
-      }).catch(error => console.log(error))
-    },
-    editarCasoAsignacion({commit,state},payload){
-      // console.log(payload.idTablero)
-      // console.log(payload.idCasoDoc)
-      if(payload.asignado) {
-        db.collection('usuarios').doc(payload.asignado).get()
-        .then(docUser => {
-          db.collection('tableros').doc(payload.idTablero).collection('casos').doc(payload.idCasoDoc).update({
-              usuarioAsignado: docUser.data().nombre,
-              foto: docUser.data().foto,
-          })
-          const message = 'se cambió la asignación a: '+docUser.data().nombre
-          db.collection('tableros').doc(payload.idTablero).collection('casos').doc(payload.idCasoDoc).collection('chat').add({
-            user_name: state.usuario.nombre,
-            message: message,
-            date: Date.now(),
-            hour: Date.now('h:i A'),
-            img: state.usuario.foto,
-            seenBy: [state.usuario.nombre],
-            id_task: payload.idCasoDoc,
-            uid: state.usuario.uid,
-            type: 'other_actions',
-            status_task: 'nuevo'
-          }).catch(error => console.log(error))
-        }).catch(error => console.log(error))
-      }
-    },
-    editarCasoColumna({commit,state},payload){
-      if(payload.columna) {
-        if(payload.columna !== 'cerrado') {
-          db.collection('tableros').doc(payload.idTablero).collection('columnas').doc(payload.columna).get()
-          .then(docCol => {
-            db.collection('tableros').doc(payload.idTablero).collection('casos').doc(payload.idCasoDoc).update({
-              columna_id: payload.columna,
-              title_columna: docCol.data().nombre,
-              usuarioAsignado: state.usuario.nombre,
-              foto: state.usuario.foto,
-            })
-
-            var message = 'se cambió el status a: '+docCol.data().nombre
-            db.collection('tableros').doc(payload.idTablero).collection('casos').doc(payload.idCasoDoc).collection('chat').add({
-              user_name: state.usuario.nombre,
-              message: message,
-              date: Date.now(),
-              hour: Date.now('h:i A'),
-              img: state.usuario.foto,
-              seenBy: [state.usuario.nombre],
-              id_task: payload.idCasoDoc,
-              uid: state.usuario.uid,
-              type: 'other_actions',
-              status_task: 'nuevo'
-            }).catch(error => console.log(error))
-          })
-        } else {
-          db.collection('tableros').doc(payload.idTablero).collection('casos').doc(payload.idCasoDoc).update({
-            columna_id: payload.columna,
-            title_columna: payload.columna,
-            usuarioAsignado: state.usuario.nombre,
-            foto: state.usuario.foto,
-          })
-
-          var message = 'se cambió el status a: '+payload.columna
-          db.collection('tableros').doc(payload.idTablero).collection('casos').doc(payload.idCasoDoc).collection('chat').add({
-            user_name: state.usuario.nombre,
-            message: message,
-            date: Date.now(),
-            hour: Date.now('h:i A'),
-            img: state.usuario.foto,
-            seenBy: [state.usuario.nombre],
-            id_task: payload.idCasoDoc,
-            uid: state.usuario.uid,
-            type: 'other_actions',
-            status_task: 'nuevo'
-          }).catch(error => console.log(error))
-        }
-      }
-      // console.log(payload.columna);
     },
     getListadoLeyes({commit, state},payload){
       commit('cargarFirebase',true)
@@ -634,242 +391,6 @@ export default new Vuex.Store({
           commit('setLeyes', listadoleyes)
       })
     },
-    setEquipo({commit, state}, payload){
-      commit('cargarFirebase', true)
-      commit('setLoading',true)
-      db.collection('listadoleyes').add({
-        tag: payload.tag,
-        codigoSap: payload.codigoSap,
-        // imagen: payload.imagen,
-        tipoEquipo: payload.tipoEquipo,
-        descripcion: payload.descripcion,
-        proceso: payload.proceso,
-        subproceso: payload.subproceso,
-        area: payload.area,
-        familia: payload.familia,
-        subfamilia: payload.subfamilia,
-        clave: payload.clave,
-        caracteristica: payload.caracteristica,
-        date: Date.now(),
-        hour: Date.now('h:i A')
-      }).catch(error => console.log(error))
-      .then(doc => {
-        // console.log(payload)
-        commit('cargarFirebase',false)
-        commit('setLoading',false)
-        router.push({name:'Equipos'})
-      })
-    },
-    getProcesos({commit, state},payload){
-      commit('cargarFirebase',true)
-      const procesos = []
-      db.collection('procesos').get()
-      .then(res => {
-          res.forEach(doc => {
-              let proceso = doc.data()
-              proceso.id = doc.id
-              procesos.push(proceso)
-          })
-          commit('cargarFirebase',false)
-          commit('setProcesos', procesos)
-      })
-    },
-    setProceso({commit, state}, payload){
-      commit('cargarFirebase', true)
-      commit('setLoading',true)
-      db.collection('procesos').add({
-        nombre: payload.nombreProceso,
-        descripcion: payload.descripcionProceso,
-        date: Date.now(),
-        hour: Date.now('h:i A')
-      }).catch(error => console.log(error))
-      .then(doc => {
-        // console.log(payload)
-        commit('cargarFirebase',false)
-        commit('setLoading',false)
-        router.push({name:'Procesos'})
-      })
-    },
-    getSubProcesos({commit, state},payload){
-      commit('cargarFirebase',true)
-      const subprocesos = []
-      db.collection('subprocesos').get()
-      .then(res => {
-          res.forEach(doc => {
-              let subproceso = doc.data()
-              subproceso.id = doc.id
-              subprocesos.push(subproceso)
-          })
-          commit('cargarFirebase',false)
-          commit('setSubProcesos', subprocesos)
-      })
-    },
-    setSubProceso({commit, state}, payload){
-      commit('cargarFirebase', true)
-      commit('setLoading',true)
-      db.collection('subprocesos').add({
-        nombre: payload.nombreSubProceso,
-        idproceso: payload.idproceso,
-        date: Date.now(),
-        hour: Date.now('h:i A')
-      }).catch(error => console.log(error))
-      .then(doc => {
-        // console.log(payload)
-        commit('cargarFirebase',false)
-        commit('setLoading',false)
-        router.push({name:'Procesos'})
-      })
-    },
-    getAreas({commit, state},payload){
-      commit('cargarFirebase',true)
-      const areas = []
-      db.collection('areas').get()
-      .then(res => {
-          res.forEach(doc => {
-              let area = doc.data()
-              area.id = doc.id
-              areas.push(area)
-          })
-          commit('cargarFirebase',false)
-          commit('setAreas', areas)
-      })
-    },
-    setArea({commit, state}, payload){
-      commit('cargarFirebase', true)
-      commit('setLoading',true)
-      db.collection('areas').add({
-        nombre: payload.nombreArea,
-        idsubproceso: payload.idsubproceso,
-        date: Date.now(),
-        hour: Date.now('h:i A')
-      }).catch(error => console.log(error))
-      .then(doc => {
-        // console.log(payload)
-        commit('cargarFirebase',false)
-        commit('setLoading',false)
-        router.push({name:'Procesos'})
-      })
-    },
-    getFamilias({commit, state},payload){
-      commit('cargarFirebase',true)
-      const familias = []
-      db.collection('familias').get()
-      .then(res => {
-          res.forEach(doc => {
-              let familia = doc.data()
-              familia.id = doc.id
-              familias.push(familia)
-          })
-          commit('cargarFirebase',false)
-          commit('setFamilias', familias)
-      })
-    },
-    setFamilia({commit,state},payload){
-      commit('cargarFirebase', true)
-      commit('setLoading',true)
-      db.collection('familias').add({
-        nombre: payload.nombreFamilia,
-        descripcion: payload.descripcionFamilia,
-        date: Date.now(),
-        hour: Date.now('h:i A')
-      }).catch(error => console.log(error))
-      .then(doc => {
-        // console.log(payload)
-        commit('cargarFirebase',false)
-        commit('setLoading',false)
-        router.push({name:'Familias'})
-      })
-    },
-    getSubFamilias({commit, state},payload){
-      commit('cargarFirebase',true)
-      const subfamilias = []
-      db.collection('subfamilias').get()
-      .then(res => {
-          res.forEach(doc => {
-              let subfamilia = doc.data()
-              subfamilia.id = doc.id
-              subfamilias.push(subfamilia)
-          })
-          commit('cargarFirebase',false)
-          commit('setSubFamilias', subfamilias)
-      })
-    },
-    setSubFamilia({commit,state},payload){
-      commit('cargarFirebase', true)
-      commit('setLoading',true)
-      db.collection('subfamilias').add({
-        nombre: payload.nombreSubFamilia,
-        idfamilia: payload.idfamilia,
-        date: Date.now(),
-        hour: Date.now('h:i A')
-      }).catch(error => console.log(error))
-      .then(doc => {
-        // console.log(payload)
-        commit('cargarFirebase',false)
-        commit('setLoading',false)
-        router.push({name:'Familias'})
-      })
-    },
-    getClaves({commit, state},payload){
-      commit('cargarFirebase',true)
-      const claves = []
-      db.collection('claves').get()
-      .then(res => {
-          res.forEach(doc => {
-              let clave = doc.data()
-              clave.id = doc.id
-              claves.push(clave)
-          })
-          commit('cargarFirebase',false)
-          commit('setClaves', claves)
-      })
-    },
-    setClave({commit,state},payload){
-      commit('cargarFirebase', true)
-      commit('setLoading',true)
-      db.collection('claves').add({
-        nombre: payload.nombreClave,
-        descripcion: payload.descripcionClave,
-        date: Date.now(),
-        hour: Date.now('h:i A')
-      }).catch(error => console.log(error))
-      .then(doc => {
-        // console.log(payload)
-        commit('cargarFirebase',false)
-        commit('setLoading',false)
-        router.push({name:'Claves'})
-      })
-    },
-    getCaracteristicas({commit, state},payload){
-      commit('cargarFirebase',true)
-      const caracteriticas = []
-      db.collection('caracteriticas').get()
-      .then(res => {
-          res.forEach(doc => {
-              let caracteritica = doc.data()
-              caracteritica.id = doc.id
-              caracteriticas.push(caracteritica)
-          })
-          commit('cargarFirebase',false)
-          commit('setCaracteriticas', caracteriticas)
-      })
-    },
-    setCaracteristica({commit,state},payload){
-      commit('cargarFirebase', true)
-      commit('setLoading',true)
-      db.collection('caracteristicas').add({
-        nombre: payload.nombreCaracteristica,
-        idclave: payload.idclave,
-        date: Date.now(),
-        hour: Date.now('h:i A')
-      }).catch(error => console.log(error))
-      .then(doc => {
-        // console.log(payload)
-        commit('cargarFirebase',false)
-        commit('setLoading',false)
-        router.push({name:'Claves'})
-      })
-    },
     cerrarSesion({commit}){
       auth.signOut()
       commit('nuevoUsuario',null)
@@ -888,7 +409,7 @@ export default new Vuex.Store({
       }
       return arregloFiltrado;
     },
-    arrayFiltradoCasos(state){
+    arrayFiltradoEmpresa(state){
       let arregloFiltrado = []
       for (let caso of state.casos) {
         let nombre = caso.nombre.toLowerCase();

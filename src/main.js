@@ -11,6 +11,7 @@ import VueChatScroll from 'vue-chat-scroll'
 import Vuelidate from 'vuelidate'
 import VueDragscroll from 'vue-dragscroll'
 import UUID from "vue-uuid"
+import '@mdi/font/css/materialdesignicons.css'
 
 Vue.use(VueChatScroll)
 Vue.use(Vuelidate)

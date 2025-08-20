@@ -10,6 +10,7 @@
   "dependencies": {
     "@babel/polyfill": "^7.4.4",
     "@fortawesome/fontawesome-free": "^5.8.2",
+    "@mdi/font": "^7.4.47",
     "axios": "^1.11.0",
     "core-js": "^3.6.5",
     "firebase": "^8.10.1",

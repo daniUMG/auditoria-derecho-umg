@@ -53,9 +53,9 @@ const routes = [
     meta: {requiresAuth: true}
   },
   {
-    path: '/legislacion/:id',
-    name: 'ConfTablero',
-    component: () => import('../views/ConfTablero.vue'),
+    path: '/editar-empresa/:id',
+    name: 'EditarEmpresa',
+    component: () => import('../views/EditarEmpresa.vue'),
     meta: {requiresAuth: true}
   },
   {

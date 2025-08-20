@@ -20,33 +20,30 @@
                         </v-col>
                     </v-row>
                     
-                    <!-- @submit.prevent="setCaso({nombre, descripcion, usuarioAsignacion: asignacion, prioridad, date, time, tiempoEstimado: tiempoestimado, tablero_id: $route.params.id})" -->
-                    <!-- <v-form> -->
-                        <v-text-field v-model.trim="nombre" :counter="50" :rules="nameRules" label="Nombre" placeholder="Ingrese un nombre..." required></v-text-field>
+                    <v-text-field v-model.trim="nombre" :counter="50" :rules="nameRules" label="Nombre" placeholder="Ingrese un nombre..." required></v-text-field>
 
-                        <v-textarea v-model.trim="descripcion" :rules="descripcionRules" :counter="1530" label="Descripción" placeholder="Ingrese una descripción del decreto/ley" required></v-textarea>
+                    <v-textarea v-model.trim="descripcion" :rules="descripcionRules" :counter="1530" label="Descripción" placeholder="Ingrese una descripción del decreto/ley" required></v-textarea>
 
-                        <v-row>
-                            <v-col cols="12" md="12">
-                                <input type="file" accept="application/pdf" :rules="fileRules" @change="handleFileUpload">
-                            </v-col>
+                    <v-row>
+                        <v-col cols="12" md="12">
+                            <input type="file" accept="application/pdf" :rules="fileRules" @change="handleFileUpload">
+                        </v-col>
 
-                            <v-col cols="12" md="12" v-if="pdfSrc">
-                                <div v-if="numPages > 0" style="margin-top: 10px; text-align: center;">
-                                    <button @click="prevPage" :disabled="page <= 1" class="mr-4" :style="page <= 1 ? 'color: #c0c0c0' : ''">⬅ Anterior</button>
-                                    <span>Página {{ page }} de {{ numPages }}</span>
-                                    <button @click="nextPage" :disabled="page >= numPages" class="ml-4" :style="page >= numPages ? 'color: #c0c0c0' : ''">Siguiente ➡</button>
-                                </div>
+                        <v-col cols="12" md="12" v-if="pdfSrc">
+                            <div v-if="numPages > 0" style="margin-top: 10px; text-align: center;">
+                                <button @click="prevPage" :disabled="page <= 1" class="mr-4" :style="page <= 1 ? 'color: #c0c0c0' : ''">⬅ Anterior</button>
+                                <span>Página {{ page }} de {{ numPages }}</span>
+                                <button @click="nextPage" :disabled="page >= numPages" class="ml-4" :style="page >= numPages ? 'color: #c0c0c0' : ''">Siguiente ➡</button>
+                            </div>
 
-                                <pdf
-                                    :src="pdfSrc"
-                                    :page="page"
-                                    @num-pages="numPages = $event"
-                                    style="width: 100%; height: 600px;"
-                                />
-                            </v-col>
-                        </v-row>
-                    <!-- </v-form> -->
+                            <pdf
+                                :src="pdfSrc"
+                                :page="page"
+                                @num-pages="numPages = $event"
+                                style="width: 100%; height: 600px;"
+                            />
+                        </v-col>
+                    </v-row>
                 </div>
             </v-flex>
         </v-layout>
@@ -205,7 +202,7 @@ export default {
         }
     },
     methods: {
-        ...mapActions(['setCaso','getUsuarios']),
+        ...mapActions(['getUsuarios']),
         handleFileUpload(event) {
             const file = event.target.files[0]
             this.filepdfSrc = event.target.files[0]

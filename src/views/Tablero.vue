@@ -44,10 +44,10 @@
                         <v-card-text style="color: #3F454C; font-size: 12px; height: 80px;">
                             {{item.descripcion}}
                         </v-card-text>
-                        <!-- <router-link :to="{name: 'ConfTablero', params: {id: item.id}}">
+                        <!-- <router-link :to="{name: 'EditarEmpresa', params: {id: item.id}}">
                             <button class="btn btn-warning float-right ml-2">Editar</button>
                         </router-link>
-                        <button @click="eliminarTablero(item.id)" class="btn btn-danger float-right">Eliminar</button> -->
+                        <button @click="eliminarEmpresa(item.id)" class="btn btn-danger float-right">Eliminar</button> -->
                         <v-card-actions>
                         <v-list-item class="grow">
                             <v-row
@@ -55,7 +55,7 @@
                             justify="end"
                             >
                             <span class="subheading mr-1">
-                                <router-link :to="{name: 'ConfTablero', params: {id: item.id}}">
+                                <router-link :to="{name: 'EditarEmpresa', params: {id: item.id}}">
                                     <v-btn fab dark small color="secondary">
                                     <v-icon dark>
                                         fas fa-cogs
@@ -103,13 +103,13 @@ export default {
         ...mapGetters(['arrayFiltrado']),
     },
     methods:{
-        ...mapActions(['getTablerosUsuarios','eliminarTablero','buscador']),
+        ...mapActions(['getEmpresasUsuario','eliminarEmpresa','buscador']),
         test(){
             console.log(this.carga)
         }
     },
     created(){
-        this.getTablerosUsuarios()
+        this.getEmpresasUsuario()
     }
 }
 </script>

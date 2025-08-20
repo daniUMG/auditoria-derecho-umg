@@ -3,34 +3,44 @@
         <v-flex>
             <div class="ml-5 contain-crearCasos">
                 <h2>Crear Empresa</h2>
-                <form @submit.prevent="setTablero({nombre,descripcion,tema,grupos: arrayGrupos})">
-                        <v-text-field
+                <form @submit.prevent="setEmpresa({nombre, descripcion, region, tema, grupos: arrayGrupos})">
+                    <v-text-field
                         v-model.trim="nombre"
                         :counter="30"
                         :rules="nombreRules"
                         label="Nombre Empresa"
                         required
-                        ></v-text-field>
-                        <v-textarea
+                    ></v-text-field>
+
+                    <v-textarea
                         v-model.trim="descripcion"
                         autocomplete="descripcion"
                         label="Descripcion"
                         :rules="descripcionRules"
                         :counter="1530"
                         required
-                        ></v-textarea>
-                        <v-select
-                            v-model="arrayGrupos"
-                            :items="grupos"
-                            item-value="id"
-                            item-text="nombre"
-                            :rules="arrayGruposRules"
-                            attach
-                            chips
-                            label="Grupos con acceso:"
-                            multiple
-                            required
-                        ></v-select>
+                    ></v-textarea>
+
+                    <v-select
+                        v-model="arrayGrupos"
+                        :items="grupos"
+                        item-value="id"
+                        item-text="nombre"
+                        :rules="arrayGruposRules"
+                        attach
+                        chips
+                        label="Grupos con acceso:"
+                        multiple
+                        required
+                    ></v-select>
+
+                    <v-text-field
+                        v-model.trim="region"
+                        :counter="17"
+                        :rules="regionRules"
+                        label="Región"
+                        required
+                    ></v-text-field>
 
                     <label for="temaTablero">Tema Empresa</label><br>
                     <input type="color" v-model="tema" required><br>
@@ -60,12 +70,17 @@ export default {
             nombre: '',
             nombreRules: [
                 v => !!v || 'El nombre es requerido',
-                v => (v && v.length <= 30) || 'La descripción no puede ser mayor a 30 caracteres'
+                v => (v && v.length <= 30) || 'El nombre no puede ser mayor a 30 caracteres'
             ],
             descripcion: '',
             descripcionRules: [
                 v => !!v || 'La descripción es requerida',
                 v => (v && v.length <= 1530) || 'La descripción no puede ser mayor a 1530 caracteres'
+            ],
+            region: '',
+            regionRules: [
+                v => !!v || 'La región es requerida',
+                v => (v && v.length <= 17) || 'La región no puede ser mayor a 17 caracteres'
             ],
             tema: '',
             arrayGrupos: [],
@@ -80,10 +95,11 @@ export default {
     validations: {
         nombre: {required, minLength: maxLength(30)},
         descripcion: {required, minLength: maxLength(1530)},
+        region: {required, minLength: maxLength(17)},
         arrayGrupos: [required]
     },
     methods: {
-        ...mapActions(['setTablero','getGrupos'])
+        ...mapActions(['setEmpresa','getGrupos'])
     },
     created(){
         this.getGrupos()
