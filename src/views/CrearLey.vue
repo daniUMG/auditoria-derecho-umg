@@ -53,7 +53,7 @@ import { required, maxLength } from 'vuelidate/lib/validators'
 import RepeaterArticulos from '../components/RepeaterArticulos.vue'
 import pdf from 'vue-pdf'
 import { mapActions, mapState } from "vuex"
-import { db, firebase } from "../firebase";
+import { db, firebase } from "../firebase"
 
 export default {
     name: 'CrearLey',

@@ -3,7 +3,7 @@
     <v-card class="pa-6">
       <v-card-title class="headline">
         <v-icon left color="">mdi-gavel</v-icon>
-        Agregar Ley
+        Editar Ley
       </v-card-title>
       
       <v-card-subtitle class="pb-4">
@@ -19,33 +19,33 @@
           </v-card-title>
           <v-card-text>
             <v-row>
-              <v-col cols="12" md="6">
-                <v-text-field
-                  v-model="documento.numeroLey"
-                  label="Número de Ley/Decreto"
-                  outlined
-                  dense
-                  prepend-inner-icon="mdi-file-document"
-                  :rules="[rules.required]"
-                ></v-text-field>
-              </v-col>
-              
-              <v-col cols="12" md="6">
-                <v-text-field
-                  v-model="documento.fecha"
-                  label="Fecha de Publicación"
-                  type="date"
-                  outlined
-                  dense
-                  prepend-inner-icon="mdi-calendar"
-                  :rules="[rules.required]"
-                ></v-text-field>
-              </v-col>
+                <v-col cols="12" md="6">
+                    <v-text-field
+                    v-model="documento.numeroLey"
+                    label="Número de Ley/Decreto"
+                    outlined
+                    dense
+                    prepend-inner-icon="mdi-file-document"
+                    :rules="[rules.required]"
+                    ></v-text-field>
+                </v-col>
+                
+                <v-col cols="12" md="6">
+                    <v-text-field
+                    v-model="documento.fecha"
+                    label="Fecha de Publicación"
+                    type="date"
+                    outlined
+                    dense
+                    prepend-inner-icon="mdi-calendar"
+                    :rules="[rules.required]"
+                    ></v-text-field>
+                </v-col>
 
-              <!-- <v-col cols="12" md="12">
-                <input type="file" accept="application/pdf" :rules="fileRules" @change="handleFileUpload">
-                <p v-if="pdfSrc" style="color: #11bf11;">Archivo correctamente cargado</p>
-              </v-col> -->
+                <!-- <v-col cols="12" md="12">
+                    <input type="file" accept="application/pdf" :rules="fileRules" @change="handleFileUpload">
+                    <p v-if="pdfSrc" style="color: #11bf11;">Archivo correctamente cargado</p>
+                </v-col> -->
             </v-row>
           </v-card-text>
         </v-card>
@@ -321,33 +321,33 @@
 
                             <!-- Si es inciso -->
                             <v-card v-else outlined color="orange lighten-5">
-                              <v-card-title class="caption orange lighten-2 white--text pa-3">
-                                <v-icon left color="white" x-small>mdi-format-list-bulleted</v-icon>
-                                Inciso {{ getNumeroInciso(articulo.elementos, elementoIndex, articulo.tipoInciso) }}
-                                <small class="ml-2">{{ getTipoIncisoTexto(elemento) }}</small>
-                                <v-spacer></v-spacer>
-                                <v-btn
-                                  icon
-                                  x-small
-                                  color="white"
-                                  @click="eliminarElemento(tituloIndex, capituloIndex, articuloIndex, elementoIndex)"
-                                >
-                                  <v-icon x-small>mdi-delete</v-icon>
-                                </v-btn>
-                              </v-card-title>
-                              
-                              <v-card-text class="pa-3">
-                                <v-textarea
-                                  v-model="elemento.contenido"
-                                  label="Contenido del Inciso"
-                                  outlined
-                                  dense
-                                  rows="2"
-                                  prepend-inner-icon="mdi-text"
-                                  :rules="[rules.required]"
-                                  hide-details
-                                ></v-textarea>
-                              </v-card-text>
+                                <v-card-title class="caption orange lighten-2 white--text pa-3">
+                                    <v-icon left color="white" x-small>mdi-format-list-bulleted</v-icon>
+                                    Inciso {{ getNumeroInciso(articulo.elementos, elementoIndex, articulo.tipoInciso) }}
+                                    <small class="ml-2">{{ getTipoIncisoTexto(elemento) }}</small>
+                                    <v-spacer></v-spacer>
+                                    <v-btn
+                                    icon
+                                    x-small
+                                    color="white"
+                                    @click="eliminarElemento(tituloIndex, capituloIndex, articuloIndex, elementoIndex)"
+                                    >
+                                    <v-icon x-small>mdi-delete</v-icon>
+                                    </v-btn>
+                                </v-card-title>
+                                
+                                <v-card-text class="pa-3">
+                                    <v-textarea
+                                    v-model="elemento.contenido"
+                                    label="Contenido del Inciso"
+                                    outlined
+                                    dense
+                                    rows="2"
+                                    prepend-inner-icon="mdi-text"
+                                    :rules="[rules.required]"
+                                    hide-details
+                                    ></v-textarea>
+                                </v-card-text>
                             </v-card>
 
                           </div>
@@ -387,7 +387,7 @@
               Vista Previa
             </v-btn>
 
-            <v-btn
+            <!-- <v-btn
               color="grey"
               large
               outlined
@@ -396,7 +396,7 @@
             >
               <v-icon left>mdi-refresh</v-icon>
               Limpiar Todo
-            </v-btn>
+            </v-btn> -->
           </v-col>
         </v-row>
       </v-form>
@@ -471,7 +471,7 @@
         </v-btn>
       </template>
     </v-snackbar>
-  </div>
+    </div>
 </template>
 
 <script>
@@ -482,34 +482,34 @@ export default {
   name: 'JerarquiaLegal',
   data() {
     return {
-      valid: false,
-      guardando: false,
-      dialogPrevia: false,
-      documento: {
-        numeroLey: '',
-        fecha: ''
-      },
-      titulos: [],
-      contadorId: 1,
-      snackbar: {
-        show: false,
-        message: '',
-        color: 'success'
-      },
-      rules: {
-        required: value => !!value || 'Este campo es requerido',
-        romano: value => {
-          if (!value) return true // Se maneja con required
-          const regexRomano = /^(XL|L?X{0,3})(IX|IV|V?I{0,3})$/i
-          const regexNumero = /^\d+$/
-          return regexRomano.test(value) || regexNumero.test(value) || 'Debe ser un número romano (I, II, III...) o arábigo (1, 2, 3...)'
-        }
-      },
-      fileRules: [
-        v => !!v || 'El archivo es requerido'
-      ],
-      filepdfSrc: null,
-      pdfSrc: null,
+        valid: false,
+        guardando: false,
+        dialogPrevia: false,
+        documento: {
+            numeroLey: '',
+            fecha: ''
+        },
+        titulos: [],
+        contadorId: 1,
+        snackbar: {
+            show: false,
+            message: '',
+            color: 'success'
+        },
+        rules: {
+            required: value => !!value || 'Este campo es requerido',
+            romano: value => {
+            if (!value) return true // Se maneja con required
+            const regexRomano = /^(XL|L?X{0,3})(IX|IV|V?I{0,3})$/i
+            const regexNumero = /^\d+$/
+            return regexRomano.test(value) || regexNumero.test(value) || 'Debe ser un número romano (I, II, III...) o arábigo (1, 2, 3...)'
+            }
+        },
+        fileRules: [
+            v => !!v || 'El archivo es requerido'
+        ],
+        filepdfSrc: null,
+        pdfSrc: null,
     }
   },
   computed: {
@@ -702,16 +702,14 @@ export default {
           totalIncisos: this.contarIncisos()
         }
 
-        db.collection('leyes').add({
+        db.collection('leyes').doc(this.$route.params.id).update({
           documento: this.documento,
-          titulos: this.titulos,
-          empresa: this.$route.params.id,
-          fecha: Date.now()
+          titulos: this.titulos
         })
         
         // Simular guardado
         setTimeout(() => {
-          console.log('Documento completo guardado:', documentoCompleto)
+        //   console.log('Documento completo guardado:', documentoCompleto)
           this.guardando = false
           this.mostrarSnackbar('Documento guardado exitosamente', 'success')
         }, 2000)
@@ -765,7 +763,15 @@ export default {
   },
   created() {
     if(this.$route.params.id) {
-      this.getEmpresa(this.$route.params.id)
+        db.collection('leyes').doc(this.$route.params.id).get()
+        .then(docLey => {
+            if(docLey.exists) {
+                this.documento = docLey.data().documento
+                this.titulos = docLey.data().titulos
+
+                this.getEmpresa(docLey.data().empresa)
+            }
+        })
     }
   }
 }

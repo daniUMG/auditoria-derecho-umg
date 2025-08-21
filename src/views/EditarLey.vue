@@ -1,113 +1,21 @@
 <template>
-    <div>
-        <v-layout>
-            <v-flex>
-                <div class="ml-5 contain-crearCasos">
-                    <v-row>
-                        <v-col cols="12" md="12">
-                            <v-btn :disabled="savingForm ? true : $v.$invalid || carga" :loading="loading" @click.prevent="saveLey" class="btn btn-seondary mt-4 float-right" style="position: relative; top: -15px;" type="submit">
-                            Guardar
-                            </v-btn>
-                            <h2 style="margin-bottom: 20px;">Editar Ley</h2>
-                            <v-btn color="primary float-right" style="margin-bottom: 25px;" @click="drawer = true" v-if="usuario.tipo === 'auditor'">Evaluar Ley</v-btn>
-                        </v-col>
-                    </v-row>
-
-                    <v-row v-if="fecha_auditoria && auditada_por">
-                        <v-col cols="12" md="12" style="text-align: right;">
-                            <p><b>Última auditoria realizada por:</b> {{ auditada_por }}</p>
-                            <p><b>Fecha última auditoria:</b> {{ fecha_auditoria }}</p>
-                        </v-col>
-                    </v-row>
-                    
-                    <v-text-field v-model.trim="nombre" :counter="50" :rules="nameRules" label="Nombre" placeholder="Ingrese un nombre..." required></v-text-field>
-
-                    <v-textarea v-model.trim="descripcion" :rules="descripcionRules" :counter="1530" label="Descripción" placeholder="Ingrese una descripción del decreto/ley" required></v-textarea>
-
-                    <v-row>
-                        <v-col cols="12" md="12">
-                            <input type="file" accept="application/pdf" :rules="fileRules" @change="handleFileUpload">
-                        </v-col>
-
-                        <v-col cols="12" md="12" v-if="pdfSrc">
-                            <div v-if="numPages > 0" style="margin-top: 10px; text-align: center;">
-                                <button @click="prevPage" :disabled="page <= 1" class="mr-4" :style="page <= 1 ? 'color: #c0c0c0' : ''">⬅ Anterior</button>
-                                <span>Página {{ page }} de {{ numPages }}</span>
-                                <button @click="nextPage" :disabled="page >= numPages" class="ml-4" :style="page >= numPages ? 'color: #c0c0c0' : ''">Siguiente ➡</button>
-                            </div>
-
-                            <pdf
-                                :src="pdfSrc"
-                                :page="page"
-                                @num-pages="numPages = $event"
-                                style="width: 100%; height: 600px;"
-                            />
-                        </v-col>
-                    </v-row>
-                </div>
-            </v-flex>
-        </v-layout>
-
-        <v-navigation-drawer
-            v-model="drawer"
-            right
-            temporary
-            width="700"
-            style="position: fixed;"
-        >
-            <v-toolbar flat>
-                <v-toolbar-title>Evaluación de la Ley</v-toolbar-title>
-                <v-spacer></v-spacer>
-                <v-btn icon @click="drawer = false">
-                <v-icon>mdi-close</v-icon>
-                </v-btn>
-            </v-toolbar>
-
-            <v-divider></v-divider>
-
-            <v-form ref="form" lazy-validation>
-                <v-container>
-                <!-- Slider para cumplimiento -->
+    <v-layout>
+        <v-flex>
+          <div class="ml-5 contain-crearCasos">
                 <v-row>
-                    <v-col cols="12">
-                    <v-subheader>Cumplimiento de la Ley: {{ cumplimiento }}%</v-subheader>
-                    <v-slider
-                        v-model="cumplimiento"
-                        :min="0"
-                        :max="100"
-                        step="1"
-                        ticks="always"
-                        tick-size="4"
-                    ></v-slider>
+                    <v-col cols="12" md="12">
+                        <repeater-edit-articulos />
                     </v-col>
                 </v-row>
-
-                <!-- Campos de radio buttons -->
-                <v-row v-for="(pregunta, index) in preguntas" :key="index">
-                    <v-col cols="12">
-                    <v-subheader>{{ pregunta.titulo }}</v-subheader>
-                    <v-radio-group v-model="evaluaciones[index]" row>
-                        <v-radio label="Muy Bajo" :value="1"></v-radio>
-                        <v-radio label="Bajo" :value="2"></v-radio>
-                        <v-radio label="Medio" :value="3"></v-radio>
-                        <v-radio label="Alto" :value="4"></v-radio>
-                        <v-radio label="Muy Alto" :value="5"></v-radio>
-                    </v-radio-group>
-                    </v-col>
-                </v-row>
-
-                <v-row justify="end">
-                    <v-btn color="success" @click.prevent="submitFormAuditor">Enviar Evaluación</v-btn>
-                </v-row>
-                </v-container>
-            </v-form>
-        </v-navigation-drawer>
-    </div>
+            </div>
+        </v-flex>
+    </v-layout>
 </template>
 
 <script>
 import { required, maxLength } from 'vuelidate/lib/validators'
 // import * as pdfjsLib from "pdfjs-dist/webpack";
+import RepeaterEditArticulos from '../components/RepeaterEditArticulos.vue'
 import moment from 'moment';
 import axios from "axios";
 import pdf from 'vue-pdf'
@@ -117,6 +25,7 @@ import { db, firebase } from "../firebase";
 export default {
     name: 'EditarLey',
     components: {
+        RepeaterEditArticulos,
         pdf
     },
     data() {
@@ -358,38 +267,38 @@ export default {
         this.savingForm = false
         this.drawer = false
 
-        if(this.$route.params.id) {
-            db.collection('leyes').doc(this.$route.params.id).get()
-            .then(docLey => {
-                if(docLey.exists) {
-                    this.legislacionid = docLey.data().legislacion ? docLey.data().legislacion : ''
-                    var pdfSrcLocal = docLey.data().url ? docLey.data().url : null
-                    this.nombre = docLey.data().nombre ? docLey.data().nombre : ''
-                    this.descripcion = docLey.data().descripcion ? docLey.data().descripcion : ''
+        // if(this.$route.params.id) {
+        //     db.collection('leyes').doc(this.$route.params.id).get()
+        //     .then(docLey => {
+        //         if(docLey.exists) {
+        //             this.legislacionid = docLey.data().legislacion ? docLey.data().legislacion : ''
+        //             var pdfSrcLocal = docLey.data().url ? docLey.data().url : null
+        //             this.nombre = docLey.data().nombre ? docLey.data().nombre : ''
+        //             this.descripcion = docLey.data().descripcion ? docLey.data().descripcion : ''
 
-                    this.cumplimiento = docLey.data().cumplimiento ? docLey.data().cumplimiento : 50
-                    this.evaluaciones = docLey.data().evaluaciones ? docLey.data().evaluaciones : [3, 3, 3, 3, 3]
-                    this.preguntas = docLey.data().preguntas ? docLey.data().preguntas : [
-                        { titulo: "Claridad de la ley" },
-                        { titulo: "Aplicabilidad práctica" },
-                        { titulo: "Impacto social" },
-                        { titulo: "Coherencia con otras leyes" },
-                        { titulo: "Facilidad de cumplimiento" }
-                    ]
-                    this.auditada_por = docLey.data().auditada_por ? docLey.data().auditada_por : ''
-                    this.fecha_auditoria = docLey.data().fecha_auditoria ? moment(docLey.data().fecha_auditoria).format('lll') : ''
+        //             this.cumplimiento = docLey.data().cumplimiento ? docLey.data().cumplimiento : 50
+        //             this.evaluaciones = docLey.data().evaluaciones ? docLey.data().evaluaciones : [3, 3, 3, 3, 3]
+        //             this.preguntas = docLey.data().preguntas ? docLey.data().preguntas : [
+        //                 { titulo: "Claridad de la ley" },
+        //                 { titulo: "Aplicabilidad práctica" },
+        //                 { titulo: "Impacto social" },
+        //                 { titulo: "Coherencia con otras leyes" },
+        //                 { titulo: "Facilidad de cumplimiento" }
+        //             ]
+        //             this.auditada_por = docLey.data().auditada_por ? docLey.data().auditada_por : ''
+        //             this.fecha_auditoria = docLey.data().fecha_auditoria ? moment(docLey.data().fecha_auditoria).format('lll') : ''
 
-                    // this.axios.get(pdfSrcLocal, { responseType: "blob" })
-                    // .then(res => {
-                    //     const url = URL.createObjectURL(res.data);
-                    //     this.pdfSrc = url; // para usar en vue-pdf
-                    // });
-                    if(pdfSrcLocal) {
-                        this.cargarPDF(pdfSrcLocal)
-                    }
-                }
-            })
-        }
+        //             // this.axios.get(pdfSrcLocal, { responseType: "blob" })
+        //             // .then(res => {
+        //             //     const url = URL.createObjectURL(res.data);
+        //             //     this.pdfSrc = url; // para usar en vue-pdf
+        //             // });
+        //             if(pdfSrcLocal) {
+        //                 this.cargarPDF(pdfSrcLocal)
+        //             }
+        //         }
+        //     })
+        // }
     },
     mounted() {
         // PDF de prueba desde la web

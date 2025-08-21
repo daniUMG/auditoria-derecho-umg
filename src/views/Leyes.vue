@@ -49,11 +49,11 @@ export default {
       return {
         search: '',
         headers: [
-            { text: 'Nombre', value: 'nombre' },
-            { text: 'Descripción', value: 'descripcion' },
-            { text: 'Fecha agregada', value: 'fecha' },
-            { text: 'Auditada por', value: 'auditada_por' },
-            { text: 'Fecha Auditoría', value: 'fecha_auditoria' },
+            { text: 'Decreto', value: 'decreto' },
+            { text: 'Fecha Publicación', value: 'fpublicacion' },
+            { text: 'Fecha agregada a la empresa', value: 'fecha' },
+            // { text: 'Auditada por', value: 'auditada_por' },
+            // { text: 'Fecha Auditoría', value: 'fecha_auditoria' },
             { text: 'Acciones', value: 'actions', filterable: false}
         ]
       }
