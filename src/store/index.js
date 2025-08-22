@@ -362,16 +362,23 @@ export default new Vuex.Store({
       const listadoleyes = []
       db.collection('leyes').get()
       .then(res => {
-          res.forEach(doc => {
-              let equipo = doc.data()
-              equipo.id = doc.id
-              equipo.fecha = doc.data().fecha ? moment(doc.data().fecha).format('lll') : '-'
-              equipo.fecha_auditoria = doc.data().fecha_auditoria ? moment(doc.data().fecha_auditoria).format('lll') : '-'
-              equipo.auditada_por = doc.data().auditada_por ? doc.data().auditada_por : '-'
-              listadoleyes.push(equipo)
+        res.forEach(doc => {
+          db.collection('tableros').doc(doc.data().empresa).get()
+          .then(docEmpresa => {
+            let ley = doc.data()
+            ley.id = doc.id
+            ley.decreto = doc.data().documento.numeroLey
+            ley.fpublicacion = doc.data().documento.fecha
+            ley.nEmpresa = docEmpresa.data().nombre
+            ley.rEmpresa = docEmpresa.data().region
+            ley.fecha = doc.data().fecha ? moment(doc.data().fecha).format('lll') : '-'
+            // ley.fecha_auditoria = doc.data().fecha_auditoria ? moment(doc.data().fecha_auditoria).format('lll') : '-'
+            // ley.auditada_por = doc.data().auditada_por ? doc.data().auditada_por : '-'
+            listadoleyes.push(ley)
           })
-          commit('cargarFirebase',false)
-          commit('setEquipos', listadoleyes)
+        })
+        commit('cargarFirebase',false)
+        commit('setEquipos', listadoleyes)
       })
     },
     getLeyesLegislacion({commit, state},payload){

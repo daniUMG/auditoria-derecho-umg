@@ -51,30 +51,30 @@
                         <v-card-actions>
                         <v-list-item class="grow">
                             <v-row
-                            align="center"
-                            justify="end"
+                                align="center"
+                                justify="end"
                             >
-                            <v-chip color="secondary" style="color: rgb(57, 162, 227) !important; background: rgb(230, 243, 251) !important; font-size: 11px; position: absolute; left: 0px; height: 22px; bottom: 3px;">
-                            {{item.region}}
-                            </v-chip>
-                            <span class="subheading mr-1">
-                                <router-link :to="{name: 'EditarEmpresa', params: {id: item.id}}">
-                                    <v-btn fab dark small color="secondary">
-                                    <v-icon dark>
-                                        fas fa-cogs
-                                    </v-icon>
-                                    </v-btn>
-                                </router-link>
-                            </span>
-                            <span class="subheading">
-                                <router-link :to="{name: 'Tareas', params: {id: item.id}}">
-                                    <v-btn fab dark small color="secondary">
-                                    <v-icon dark>
-                                        fas fa fa-eye
-                                    </v-icon>
-                                    </v-btn>
-                                </router-link>
-                            </span>
+                                <v-chip color="secondary" style="color: rgb(57, 162, 227) !important; background: rgb(230, 243, 251) !important; font-size: 11px; position: absolute; left: 0px; height: 22px; bottom: 3px;">
+                                    {{item.region}}
+                                </v-chip>
+                                <span class="subheading mr-1">
+                                    <router-link :to="{name: 'EditarEmpresa', params: {id: item.id}}">
+                                        <v-btn fab dark small color="secondary">
+                                        <v-icon dark>
+                                            fas fa-cogs
+                                        </v-icon>
+                                        </v-btn>
+                                    </router-link>
+                                </span>
+                                <span class="subheading">
+                                    <router-link :to="{name: 'Tareas', params: {id: item.id}}">
+                                        <v-btn fab dark small color="secondary">
+                                        <v-icon dark>
+                                            fas fa fa-eye
+                                        </v-icon>
+                                        </v-btn>
+                                    </router-link>
+                                </span>
                             </v-row>
                         </v-list-item>
                         </v-card-actions>

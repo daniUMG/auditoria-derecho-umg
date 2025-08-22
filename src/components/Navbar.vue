@@ -84,7 +84,7 @@ export default {
           { title: 'Leyes', icon: 'fas fa fa-gavel', to: {name:'Leyes'}},
           { title: 'Usuarios', icon: 'fas fa-user-friends', to: {name:'Usuarios'}},
           { title: 'Grupos', icon: 'fas fa-users', to: {name:'Grupos'}},
-          { title: 'Reportes', icon: 'fas fa fa-signal', to: {name:'Reportes'}}
+          // { title: 'Reportes', icon: 'fas fa fa-signal', to: {name:'Reportes'}}
         ]
       : this.usuario.tipo === 'auditor' ?
         this.items = [
@@ -96,6 +96,7 @@ export default {
       :
         this.items = [
           { title: 'Empresas', icon: 'fas fa-building', to: {name:'Empresas'}},
+          { title: 'Reportes', icon: 'fas fa fa-signal', to: {name:'Reportes'}}
           // { title: 'Leyes', icon: 'fas fa fa-gavel', to: {name:'Leyes'}},
           // { title: 'Usuarios', icon: 'fas fa-user-friends', to: {name:'Usuarios'}},
           // { title: 'Grupos', icon: 'fas fa-users', to: {name:'Grupos'}}

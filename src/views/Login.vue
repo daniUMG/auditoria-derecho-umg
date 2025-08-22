@@ -25,10 +25,10 @@
                         <p v-if="error != null && error.code === 'auth/wrong-password'" class="text-danger">Contraseña incorrecta</p>
 
 
-                        <v-btn block color="error" @click="google">
+                        <!-- <v-btn block color="error" @click="google">
                             <v-icon left dark>fab fa-google</v-icon>
                             Google
-                        </v-btn>
+                        </v-btn> -->
                       <!-- <v-btn block color="info" class="mt-2" @click="facebook">
                           <v-icon left dark>fab fa-facebook-square</v-icon>
                           Facebook

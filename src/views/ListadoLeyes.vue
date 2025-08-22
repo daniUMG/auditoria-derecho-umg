@@ -14,15 +14,20 @@
                     ></v-text-field>
                     </v-card-title>
                     <v-data-table
-                    :headers="headers"
-                    :items="listadoleyes"
-                    :search="search"
+                        :headers="headers"
+                        :items="listadoleyes"
+                        :search="search"
                     >
-                        <template v-slot:[`item.actions`]="{item}">
+                        <template v-slot:[`item.rEmpresa`]="{item}">
+                            <v-chip color="secondary" style="color: rgb(57, 162, 227) !important; background: rgb(230, 243, 251) !important; font-size: 11px; height: 22px;">
+                                {{ item.rEmpresa }}
+                            </v-chip>
+                        </template>
+                        <!-- <template v-slot:[`item.actions`]="{item}">
                             <v-list-item :to="`/legislacion/editar/ley/${item.id}`">
                                 <v-icon class="">fas fa-eye</v-icon>
                             </v-list-item>
-                        </template>
+                        </template> -->
                     </v-data-table>
                 </v-card>
             </div>
@@ -39,18 +44,11 @@ export default {
       return {
         search: '',
         headers: [
-        //   {
-        //     text: '#TAG',
-        //     align: 'start',
-        //     filterable: true,
-        //     value: 'tag',
-        //   },
-            { text: 'Nombre', value: 'nombre' },
-            { text: 'Descripción', value: 'descripcion' },
-            { text: 'Fecha agregada', value: 'fecha' },
-            { text: 'Auditada por', value: 'auditada_por' },
-            { text: 'Fecha Auditoría', value: 'fecha_auditoria' },
-            { text: 'Acciones', value: 'actions', filterable: false}
+            { text: 'Decreto', value: 'decreto' },
+            { text: 'Fecha Publicación', value: 'fpublicacion' },
+            { text: 'Empresa', value: 'nEmpresa' },
+            { text: 'Región empresa', value: 'rEmpresa' },
+            { text: 'Fecha agregada a la empresa', value: 'fecha' },
         ]
       }
     },

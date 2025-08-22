@@ -79,7 +79,13 @@ const routes = [
   {
     path: '/leyes',
     name: 'Leyes',
-    component: () => import('../views/Leyes.vue'),
+    component: () => import('../views/ListadoLeyes.vue'),
+    meta: {requiresAuth: true}
+  },
+  {
+    path: '/auditar/ley/:id',
+    name: 'AuditarLey',
+    component: () => import('../views/AuditarLey.vue'),
     meta: {requiresAuth: true}
   },
   {
