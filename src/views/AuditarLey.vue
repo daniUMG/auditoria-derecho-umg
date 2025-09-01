@@ -379,6 +379,8 @@
 </template>
 
 <script>
+// import jsPDF from 'jspdf'
+import html2canvas from 'html2canvas'
 import { mapActions, mapState } from "vuex"
 import { db, firebase } from "../firebase"
 
@@ -524,7 +526,7 @@ export default {
             }
         })
         
-        console.log('Calificaciones cargadas desde DB:', this.calificacionesTemp)
+        // console.log('Calificaciones cargadas desde DB:', this.calificacionesTemp)
     },
 
     // Método modificado para inicializar (tu código actual)
@@ -812,11 +814,570 @@ export default {
         progreso: this.progreso,
         detalleCalificaciones: this.calificaciones
       }
+      this.generarReportePDF()
+      // this.generarReportePDFCanvas()
       
       console.log('Reporte generado:', reporte)
       this.mostrarSnackbar('Reporte generado correctamente', 'info')
     },
     
+    // async generarReportePDFCanvas() {
+    //   try {
+    //     // Crear HTML del reporte
+    //     const reporteHTML = this.crearHTMLReporte()
+        
+    //     // Crear elemento temporal
+    //     const elemento = document.createElement('div')
+    //     elemento.innerHTML = reporteHTML
+    //     elemento.style.position = 'absolute'
+    //     elemento.style.left = '-9999px'
+    //     elemento.style.width = '800px'
+    //     elemento.style.padding = '20px'
+    //     elemento.style.backgroundColor = 'white'
+    //     elemento.style.fontFamily = 'Arial, sans-serif'
+        
+    //     document.body.appendChild(elemento)
+        
+    //     // Convertir a canvas
+    //     const canvas = await html2canvas(elemento)
+        
+    //     // Crear PDF usando CDN de jsPDF
+    //     const { jsPDF } = window.jspdf
+    //     const pdf = new jsPDF('p', 'mm', 'a4')
+        
+    //     const imgData = canvas.toDataURL('image/png')
+    //     const imgWidth = 210
+    //     const pageHeight = 295
+    //     const imgHeight = (canvas.height * imgWidth) / canvas.width
+    //     let heightLeft = imgHeight
+        
+    //     let position = 0
+        
+    //     pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight)
+    //     heightLeft -= pageHeight
+        
+    //     while (heightLeft >= 0) {
+    //       position = heightLeft - imgHeight
+    //       pdf.addPage()
+    //       pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight)
+    //       heightLeft -= pageHeight
+    //     }
+        
+    //     // Limpiar
+    //     document.body.removeChild(elemento)
+        
+    //     // Descargar
+    //     pdf.save(`Reporte_${this.documento.numeroLey}_${new Date().toISOString().split('T')[0]}.pdf`)
+    //     this.mostrarSnackbar('Reporte PDF generado correctamente', 'success')
+        
+    //   } catch (error) {
+    //     console.error('Error generando PDF:', error)
+    //     this.mostrarSnackbar('Error al generar el PDF', 'error')
+    //   }
+    // },
+    
+    // crearHTMLReporte() {
+    //   return `
+    //     <div style="font-family: Arial, sans-serif; padding: 20px;">
+    //       <h1 style="color: #1976d2; border-bottom: 2px solid #1976d2; padding-bottom: 10px;">
+    //         REPORTE DE CALIFICACIÓN LEGAL
+    //       </h1>
+          
+    //       <div style="margin: 20px 0;">
+    //         <p><strong>Documento:</strong> ${this.documento.numeroLey}</p>
+    //         <p><strong>Fecha:</strong> ${this.documento.fecha}</p>
+    //         <p><strong>Fecha de Evaluación:</strong> ${new Date().toLocaleDateString()}</p>
+    //       </div>
+          
+    //       <div style="background: #f5f5f5; padding: 15px; border-radius: 8px; margin: 20px 0;">
+    //         <h2 style="color: #673ab7; margin-top: 0;">RESUMEN ESTADÍSTICO</h2>
+    //         <div style="display: flex; justify-content: space-around; text-align: center;">
+    //           <div style="color: #4caf50;"><strong>${this.resumen.cumple}</strong><br>Cumple</div>
+    //           <div style="color: #ff9800;"><strong>${this.resumen.parcial}</strong><br>Parcial</div>
+    //           <div style="color: #f44336;"><strong>${this.resumen.noCumple}</strong><br>No Cumple</div>
+    //           <div style="color: #9e9e9e;"><strong>${this.resumen.noAplica}</strong><br>No Aplica</div>
+    //         </div>
+    //         <p style="text-align: center; margin: 10px 0;"><strong>Auditoría completada al: ${this.progreso.porcentaje.toFixed(1)}%</strong></p>
+    //       </div>
+          
+    //       <h2 style="color: #1976d2;">DETALLE DE CALIFICACIONES</h2>
+          
+    //       ${this.generarDetalleHTML()}
+    //     </div>
+    //   `
+    // },
+
+    crearHTMLReporte() {
+      return `
+        <div style="font-family: Arial, sans-serif; padding: 20px;">
+          <div style="background: #f5f5f5; padding: 15px; border-radius: 8px; margin: 20px 0;">
+            <h2 style="color: #673ab7; margin-top: 0;">RESUMEN ESTADÍSTICO</h2>
+            <div style="display: flex; justify-content: space-around; text-align: center;">
+              <div style="color: #4caf50;"><strong>${this.resumen.cumple}</strong><br>Cumple</div>
+              <div style="color: #ff9800;"><strong>${this.resumen.parcial}</strong><br>Parcial</div>
+              <div style="color: #f44336;"><strong>${this.resumen.noCumple}</strong><br>No Cumple</div>
+              <div style="color: #9e9e9e;"><strong>${this.resumen.noAplica}</strong><br>No Aplica</div>
+            </div>
+            <p style="text-align: center; margin: 10px 0;"><strong>Auditoría completada al: ${this.progreso.porcentaje.toFixed(1)}%</strong></p>
+          </div>
+          
+          <h2 style="color: #1976d2;">DETALLE DE CALIFICACIONES</h2>
+          
+          ${this.generarDetalleHTML()}
+        </div>
+      `
+    },
+
+    crearHTMLReporteHeader() {
+      return `
+            <div style="margin: 20px 0;">
+              <p><strong>Documento:</strong> ${this.documento.numeroLey}</p>
+              <p><strong>Fecha:</strong> ${this.documento.fecha}</p>
+              <p><strong>Fecha de Evaluación:</strong> ${new Date().toLocaleDateString()}</p>
+            </div>
+      `
+    },
+    
+    generarDetalleHTML() {
+      let html = ''
+      
+      this.titulos.forEach(titulo => {
+        html += `<h3 style="color: #1976d2; margin-top: 25px;">${titulo.numero}. ${titulo.nombre}</h3>`
+        
+        titulo.capitulos.forEach(capitulo => {
+          html += `<h4 style="color: #1565c0; margin-left: 10px;">Capítulo ${capitulo.numero}: ${capitulo.nombre}</h4>`
+          
+          capitulo.articulos.forEach(articulo => {
+            const calificacionArt = this.getCalificacionArticulo(articulo.id)
+            const estadoTexto = calificacionArt ? this.getTextoEstado(calificacionArt.estado) : 'Sin calificar'
+            const color = this.getColorHTML(calificacionArt?.estado)
+            
+            html += `
+              <div style="margin-left: 20px; margin-bottom: 15px; border-left: 3px solid ${color}; padding-left: 10px;">
+                <h5 style="margin: 5px 0;">${articulo.nombre}</h5>
+                <p style="color: ${color}; font-weight: bold;">Estado: ${estadoTexto}</p>
+                ${calificacionArt?.comentario ? `<p><em>Comentario: ${calificacionArt.comentario}</em></p>` : ''}
+                
+                ${this.generarIncisosHTML(articulo)}
+              </div>
+            `
+          })
+        })
+      })
+      
+      return html
+    },
+    
+    generarIncisosHTML(articulo) {
+      let html = ''
+      
+      articulo.elementos.forEach((elemento, index) => {
+        if (elemento.tipo === 'inciso') {
+          const calificacionInc = this.getCalificacionInciso(articulo.id, elemento.id)
+          const estadoTexto = calificacionInc ? this.getTextoEstado(calificacionInc.estado) : 'Sin calificar'
+          const color = this.getColorHTML(calificacionInc?.estado)
+          const numeroInciso = this.getNumeroInciso(articulo.elementos, index, elemento.tipoInciso)
+          
+          html += `
+            <div style="margin-left: 15px; margin-bottom: 8px;">
+              <p style="margin: 2px 0;"><strong>${numeroInciso})</strong> ${elemento.contenido}</p>
+              <p style="color: ${color}; font-size: 12px; margin: 2px 0;">Estado: ${estadoTexto}</p>
+              ${calificacionInc?.comentario ? `<p style="font-size: 11px; color: #666; margin: 2px 0;"><em>${calificacionInc.comentario}</em></p>` : ''}
+            </div>
+          `
+        }
+      })
+      
+      return html
+    },
+    
+    getColorHTML(estado) {
+      const colores = {
+        'cumple': '#4caf50',
+        'parcial': '#ff9800', 
+        'no_cumple': '#f44336',
+        'no_aplica': '#9e9e9e'
+      }
+      return colores[estado] || '#000000'
+    },
+    
+    // FUNCIÓN PRINCIPAL PARA GENERAR PDF
+    
+    async generarReportePDF() {
+      try {
+        const { jsPDF } = window.jspdf
+        const doc = new jsPDF()
+        
+        // Configuración de colores
+        const azulPrimario = [65, 105, 225] // Color azul del encabezado
+        const azulSecundario = [70, 130, 180]
+        
+        // ENCABEZADO PRINCIPAL
+        doc.setFillColor(...azulPrimario)
+        doc.rect(0, 0, 210, 70, 'F')
+        
+        // Nombre de la empresa (centrado y grande)
+        doc.setTextColor(255, 255, 255)
+        doc.setFontSize(28)
+        doc.setFont('helvetica', 'bold')
+        const nombreReporte = "Cumplimiento Legal de la empresa:" // Variable personalizable
+        doc.text(nombreReporte, 105, 20, { align: 'center' })
+        doc.setFont('helvetica', 'bold')
+        const nombreEmpresa = this.tablero.nombre
+        doc.text(nombreEmpresa, 105, 35, { align: 'center' })
+
+        // const reporteHTMLHeader = this.crearHTMLReporteHeader()
+        
+        // // Crear elemento temporal
+        // const elementoHeader = document.createElement('div')
+        // elementoHeader.innerHTML = reporteHTMLHeader
+        // // elementoHeader.style.position = 'absolute'
+        // // elementoHeader.style.left = '-9999px'
+        // // elementoHeader.style.width = '800px'
+        // // elementoHeader.style.padding = '20px'
+        // // elementoHeader.style.backgroundColor = 'white'
+        // elementoHeader.style.fontFamily = 'Arial, sans-serif'
+        
+        // document.body.appendChild(elementoHeader)
+        
+        // // Convertir a canvas
+        // const canvasHeader = await html2canvas(elementoHeader)
+
+        // // Crear PDF usando CDN de jsPDF
+        // // const { jsPDF } = window.jspdf
+        // // const pdf = new jsPDF('p', 'mm', 'a4')
+        
+        // const imgDataHeader = canvasHeader.toDataURL('image/png')
+        // const imgWidthHeader = 210
+        // const pageHeightHeader = 295
+        // const imgHeightHeader = (canvasHeader.height * imgWidthHeader) / canvasHeader.width
+        // let heightLeftHeader = imgHeightHeader
+        
+        // let positionHeader = 0
+        
+        // doc.addImage(imgDataHeader, 'PNG', 0, positionHeader, imgWidthHeader, imgHeightHeader)
+        // heightLeftHeader -= pageHeightHeader
+        
+        // while (heightLeftHeader >= 0) {
+        //   positionHeader = heightLeftHeader - imgHeightHeader
+        //   doc.addPage()
+        //   doc.addImage(imgDataHeader, 'PNG', 0, positionHeader, imgWidthHeader, imgHeightHeader)
+        //   heightLeftHeader -= pageHeightHeader
+        // }
+        
+        // // Limpiar
+        // document.body.removeChild(elementoHeader)
+        // <div style="margin: 20px 0;">
+        //       <p><strong>Documento:</strong> ${this.documento.numeroLey}</p>
+        //       <p><strong>Fecha:</strong> ${this.documento.fecha}</p>
+        //       <p><strong>Fecha de Evaluación:</strong> ${new Date().toLocaleDateString()}</p>
+        //     </div>
+        
+        
+        // Ley evaluada (más pequeño, centrado)
+        doc.setFontSize(14)
+        doc.setFont('helvetica', 'normal')
+        doc.text(`Decreto: ${this.documento.numeroLey}`, 105, 45, { align: 'center' })
+        doc.text(`Fecha del decreto: ${this.documento.fecha}`, 105, 53, { align: 'center' })
+        doc.text(`Fecha de Evaluación: ${new Date().toLocaleDateString()}`, 105, 61, { align: 'center' })
+        
+        // SECCIÓN: NIVEL DE MADUREZ
+        let yPos = 75
+        doc.setFillColor(...azulSecundario)
+        doc.rect(20, yPos, 170, 12, 'F')
+        
+        doc.setTextColor(255, 255, 255)
+        doc.setFontSize(14)
+        doc.setFont('helvetica', 'bold')
+        doc.text("Nivel de madurez X - NombreNivel", 105, yPos + 8, { align: 'center' })
+        
+        // Descripción del nivel
+        yPos += 25
+        doc.setTextColor(100, 100, 100)
+        doc.setFontSize(11)
+        doc.setFont('helvetica', 'normal')
+        doc.text("Pequeño resumen de lo que implica este nivel de madurez", 105, yPos, { align: 'center' })
+        
+        // SECCIÓN: RESUMEN Y RECOMENDACIONES
+        yPos += 25
+        doc.setFillColor(...azulSecundario)
+        doc.rect(20, yPos, 170, 12, 'F')
+        
+        doc.setTextColor(255, 255, 255)
+        doc.setFontSize(14)
+        doc.setFont('helvetica', 'bold')
+        doc.text("Resumen y recomendaciones", 105, yPos + 8, { align: 'center' })
+        
+        // GRÁFICA DE BARRAS
+        yPos += 30
+        this.dibujarGraficaBarras(doc, yPos)
+        
+        // Párrafo explicativo
+        yPos += 80
+        doc.setTextColor(100, 100, 100)
+        doc.setFontSize(10)
+        doc.setFont('helvetica', 'normal')
+        const textoExplicativo = "Párrafo destacando por qué la empresa obtuvo este nivel de madurez y una pequeña recomendación"
+        const lineasTexto = doc.splitTextToSize(textoExplicativo, 170)
+        lineasTexto.forEach(linea => {
+          doc.text(linea, 105, yPos, { align: 'center' })
+          yPos += 5
+        })
+        
+        // NUEVA PÁGINA PARA ARTÍCULOS EVALUADOS
+        doc.addPage()
+        yPos = 20
+        
+        // SECCIÓN: ARTÍCULOS EVALUADOS
+        doc.setFillColor(...azulSecundario)
+        doc.rect(20, yPos, 170, 12, 'F')
+        
+        doc.setTextColor(255, 255, 255)
+        doc.setFontSize(14)
+        doc.setFont('helvetica', 'bold')
+        doc.text("Artículos evaluados", 105, yPos + 8, { align: 'center' })
+        
+        // DETALLE DE CALIFICACIONES
+        yPos += 25
+        this.generarDetalleCalificacionesPDF(doc, yPos)
+
+        // Crear HTML del reporte
+        const reporteHTML = this.crearHTMLReporte()
+        
+        // Crear elemento temporal
+        const elemento = document.createElement('div')
+        elemento.innerHTML = reporteHTML
+        elemento.style.position = 'absolute'
+        elemento.style.left = '-9999px'
+        elemento.style.width = '800px'
+        elemento.style.padding = '20px'
+        elemento.style.backgroundColor = 'white'
+        elemento.style.fontFamily = 'Arial, sans-serif'
+        
+        document.body.appendChild(elemento)
+        
+        // Convertir a canvas
+        const canvas = await html2canvas(elemento)
+
+        // Crear PDF usando CDN de jsPDF
+        // const { jsPDF } = window.jspdf
+        // const pdf = new jsPDF('p', 'mm', 'a4')
+        
+        const imgData = canvas.toDataURL('image/png')
+        const imgWidth = 210
+        const pageHeight = 295
+        const imgHeight = (canvas.height * imgWidth) / canvas.width
+        let heightLeft = imgHeight
+        
+        let position = 0
+        
+        doc.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight)
+        heightLeft -= pageHeight
+        
+        while (heightLeft >= 0) {
+          position = heightLeft - imgHeight
+          doc.addPage()
+          doc.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight)
+          heightLeft -= pageHeight
+        }
+        
+        // Limpiar
+        document.body.removeChild(elemento)
+        
+        // Descargar PDF
+        doc.save(`Reporte_${this.documento.numeroLey}_${new Date().toISOString().split('T')[0]}.pdf`)
+        this.mostrarSnackbar('Reporte PDF generado correctamente', 'success')
+        
+      } catch (error) {
+        console.error('Error generando PDF:', error)
+        this.mostrarSnackbar('Error al generar el PDF', 'error')
+      }
+    },
+
+    // FUNCIÓN PARA DIBUJAR GRÁFICA DE BARRAS
+    dibujarGraficaBarras(doc, startY) {
+      const datos = [
+        { label: 'Cumple', valor: this.resumen.cumple, color: [76, 175, 80] },
+        { label: 'No cumple', valor: this.resumen.noCumple, color: [244, 67, 54] },
+        { label: 'Cumple parcialmente', valor: this.resumen.parcial, color: [255, 152, 0] },
+        { label: 'No aplica', valor: this.resumen.noAplica, color: [158, 158, 158] }
+      ]
+      
+      const maxValor = Math.max(...datos.map(d => d.valor), 1)
+      const anchoGrafica = 150
+      const altoGrafica = 40
+      const anchoBarra = 30
+      const espacioBarra = 8
+      
+      let xPos = 30
+      
+      // Dibujar ejes
+      doc.setDrawColor(0, 0, 0)
+      doc.line(25, startY + altoGrafica + 5, 25 + anchoGrafica, startY + altoGrafica + 5) // Eje X
+      doc.line(25, startY, 25, startY + altoGrafica + 5) // Eje Y
+      
+      // Dibujar barras
+      datos.forEach((dato, index) => {
+        const alturaBarra = (dato.valor / maxValor) * altoGrafica
+        const yBarra = startY + altoGrafica + 5 - alturaBarra
+        
+        // Dibujar barra
+        doc.setFillColor(...dato.color)
+        doc.rect(xPos, yBarra, anchoBarra, alturaBarra, 'F')
+        
+        // Valor encima de la barra
+        doc.setTextColor(0, 0, 0)
+        doc.setFontSize(10)
+        doc.setFont('helvetica', 'bold')
+        doc.text(dato.valor.toString(), xPos + anchoBarra/2, yBarra - 2, { align: 'center' })
+        
+        // Etiqueta debajo
+        doc.setFontSize(8)
+        doc.setFont('helvetica', 'normal')
+        const lineasLabel = doc.splitTextToSize(dato.label, anchoBarra)
+        lineasLabel.forEach((linea, lineIndex) => {
+          doc.text(linea, xPos + anchoBarra/2, startY + altoGrafica + 12 + (lineIndex * 4), { align: 'center' })
+        })
+        
+        xPos += anchoBarra + espacioBarra
+      })
+      
+      // Escala del eje Y
+      doc.setTextColor(100, 100, 100)
+      doc.setFontSize(8)
+      for (let i = 0; i <= maxValor; i += Math.ceil(maxValor / 4)) {
+        const yEscala = startY + altoGrafica + 5 - (i / maxValor) * altoGrafica
+        doc.text(i.toString(), 22, yEscala, { align: 'right' })
+      }
+    },
+
+    // FUNCIÓN PARA GENERAR DETALLE DE CALIFICACIONES
+    generarDetalleCalificacionesPDF(doc, startY) {
+      let yPosition = startY
+      
+      this.titulos.forEach((titulo, tituloIndex) => {
+        // Verificar espacio en página
+        if (yPosition > 250) {
+          doc.addPage()
+          yPosition = 20
+        }
+        
+        // Título
+        doc.setFontSize(12)
+        doc.setTextColor(25, 118, 210) // Azul
+        doc.setFont('helvetica', 'bold')
+        doc.text(`${titulo.numero}. ${titulo.nombre}`, 20, yPosition)
+        yPosition += 10
+        
+        titulo.capitulos.forEach(capitulo => {
+          if (yPosition > 250) {
+            doc.addPage()
+            yPosition = 20
+          }
+          
+          // Capítulo
+          doc.setFontSize(10)
+          doc.setTextColor(0, 0, 0)
+          doc.setFont('helvetica', 'bold')
+          doc.text(`  Cap. ${capitulo.numero}: ${capitulo.nombre}`, 25, yPosition)
+          yPosition += 8
+          
+          capitulo.articulos.forEach(articulo => {
+            if (yPosition > 250) {
+              doc.addPage()
+              yPosition = 20
+            }
+            
+            // Artículo
+            const calificacionArt = this.getCalificacionArticulo(articulo.id)
+            const estadoTexto = calificacionArt ? this.getTextoEstado(calificacionArt.estado) : 'Sin calificar'
+            const color = this.getColorPDF(calificacionArt?.estado)
+            
+            doc.setTextColor(...color)
+            doc.setFont('helvetica', 'bold')
+            doc.text(`    ${articulo.nombre}`, 30, yPosition)
+            yPosition += 5
+            
+            doc.setFont('helvetica', 'normal')
+            doc.text(`    Estado: ${estadoTexto}`, 35, yPosition)
+            yPosition += 5
+            
+            // Comentario del artículo
+            if (calificacionArt?.comentario) {
+              doc.setTextColor(100, 100, 100)
+              doc.setFontSize(8)
+              const comentarioLineas = doc.splitTextToSize(`    Comentario: ${calificacionArt.comentario}`, 150)
+              comentarioLineas.forEach(linea => {
+                if (yPosition > 250) {
+                  doc.addPage()
+                  yPosition = 20
+                }
+                doc.text(linea, 35, yPosition)
+                yPosition += 4
+              })
+              doc.setFontSize(10)
+            }
+            
+            // Incisos del artículo
+            articulo.elementos.forEach((elemento, elementoIndex) => {
+              if (elemento.tipo === 'inciso') {
+                if (yPosition > 250) {
+                  doc.addPage()
+                  yPosition = 20
+                }
+                
+                const calificacionInc = this.getCalificacionInciso(articulo.id, elemento.id)
+                const estadoTextoInc = calificacionInc ? this.getTextoEstado(calificacionInc.estado) : 'Sin calificar'
+                const colorInc = this.getColorPDF(calificacionInc?.estado)
+                
+                doc.setTextColor(...colorInc)
+                const numeroInciso = this.getNumeroInciso(articulo.elementos, elementoIndex, elemento.tipoInciso)
+                doc.setFont('helvetica', 'bold')
+                doc.text(`      ${numeroInciso}) ${elemento.contenido}`, 40, yPosition)
+                yPosition += 4
+                
+                doc.setFont('helvetica', 'normal')
+                doc.text(`      Estado: ${estadoTextoInc}`, 45, yPosition)
+                yPosition += 4
+                
+                // Comentario del inciso
+                if (calificacionInc?.comentario) {
+                  doc.setTextColor(100, 100, 100)
+                  doc.setFontSize(8)
+                  const comentarioLineas = doc.splitTextToSize(`      Comentario: ${calificacionInc.comentario}`, 140)
+                  comentarioLineas.forEach(linea => {
+                    if (yPosition > 250) {
+                      doc.addPage()
+                      yPosition = 20
+                    }
+                    doc.text(linea, 45, yPosition)
+                    yPosition += 3
+                  })
+                  doc.setFontSize(10)
+                }
+                yPosition += 2
+              }
+            })
+            
+            yPosition += 5
+          })
+          yPosition += 5
+        })
+        yPosition += 8
+      })
+    },
+
+    // FUNCIÓN AUXILIAR PARA COLORES EN PDF
+    getColorPDF(estado) {
+      const colores = {
+        'cumple': [76, 175, 80],      // Verde
+        'parcial': [255, 152, 0],     // Naranja
+        'no_cumple': [244, 67, 54],   // Rojo
+        'no_aplica': [158, 158, 158]  // Gris
+      }
+      return colores[estado] || [0, 0, 0] // Negro por defecto
+    },
+
     mostrarSnackbar(mensaje, color = 'success') {
       this.snackbar = {
         show: true,
