@@ -22,6 +22,8 @@ export default new Vuex.Store({
     buscadorCasos: '',
     usuarios: [],
     listadoleyes: [],
+    listadoReportes: [],
+    usuarioReportes: [],
     leyes: [],
     grupos: [],
     loading: false
@@ -61,7 +63,13 @@ export default new Vuex.Store({
     setUsuarios(state,payload){
       state.usuarios = payload
     },
-    setEquipos(state, payload){
+    setUsuarioReportes(state, payload){
+      state.usuarioReportes = payload
+    },
+    setReportes(state, payload){
+      state.listadoReportes = payload
+    },
+    setListadoLeyes(state, payload){
       state.listadoleyes = payload
     },
     setLeyes(state, payload){
@@ -378,9 +386,92 @@ export default new Vuex.Store({
           })
         })
         commit('cargarFirebase',false)
-        commit('setEquipos', listadoleyes)
+        commit('setListadoLeyes', listadoleyes)
       })
     },
+    getListadoReportes({commit, state},payload){
+      commit('cargarFirebase',true)
+      const listadoReportes = []
+      // db.collection('leyes').get()
+      // .then(res => {
+      //   res.forEach(doc => {
+          db.collection('reportes').get()
+          .then(docs => {
+            // console.log(docs.size)
+            docs.forEach(doc => {
+              let ley = doc.data()
+              ley.id = doc.id
+              ley.decreto = doc.data().documento.numeroLey
+              ley.fpublicacion = doc.data().documento.fecha
+              ley.nEmpresa = doc.data().tablero.nombre
+              ley.rEmpresa = doc.data().tablero.region
+              ley.fecha = doc.data().fecha ? moment(doc.data().fecha).format('lll') : '-'
+              ley.fevaluacion = doc.data().documento.fechaEvaluacion
+              // ley.fecha_auditoria = doc.data().fecha_auditoria ? moment(doc.data().fecha_auditoria).format('lll') : '-'
+              // ley.auditada_por = doc.data().auditada_por ? doc.data().auditada_por : '-'
+              listadoReportes.push(ley)
+            })
+            // console.log(listadoReportes.length)
+            commit('cargarFirebase',false)
+            commit('setReportes', listadoReportes)
+          })
+        // })
+      // })
+    },
+    getUsuarioReportes({commit, state},payload){
+      commit('cargarFirebase',true)
+      const listadoReportes = []
+      db.collection('tableros').get()
+      .then(res => {
+        res.forEach(doc => {
+          doc.data().grupos.forEach(itemsGrupos => {
+            db.collection('grupos').doc(itemsGrupos).get()
+            .then(itemGrupo => {
+              var tableros = []
+              itemGrupo.data().usuarios.forEach(itemUsuario => {
+                if(itemUsuario == state.usuario.uid) {
+                  // let tablero = doc.data()
+                  // tablero.id = doc.id
+                  tableros.push(doc.id)
+                }
+              })
+
+              // console.log(tableros)
+              if(tableros.length) {
+                db.collection('reportes').where('empresa', 'in', tableros).get()
+                .then(docs => {
+                  // console.log(docs.size)
+                  docs.forEach(doc => {
+                    if(listadoReportes.filter(ele => ele.id === doc.id).length === 0) {
+                      let ley = doc.data()
+                      ley.id = doc.id
+                      ley.decreto = doc.data().documento.numeroLey
+                      ley.fpublicacion = doc.data().documento.fecha
+                      ley.nEmpresa = doc.data().tablero.nombre
+                      ley.rEmpresa = doc.data().tablero.region
+                      ley.fecha = doc.data().fecha ? moment(doc.data().fecha).format('lll') : '-'
+                      ley.fevaluacion = doc.data().documento.fechaEvaluacion
+                      // ley.fecha_auditoria = doc.data().fecha_auditoria ? moment(doc.data().fecha_auditoria).format('lll') : '-'
+                      // ley.auditada_por = doc.data().auditada_por ? doc.data().auditada_por : '-'
+                      listadoReportes.push(ley)
+                    }
+                  })
+                  // console.log(listadoReportes.length)
+                  // commit('cargarFirebase',false)
+                  // commit('setUsuarioReportes', listadoReportes)
+                })
+              }
+            })
+          })
+        })
+
+        // setTimeout(() => {
+          commit('cargarFirebase',false)
+          commit('setUsuarioReportes', listadoReportes)
+        // }, 3300)
+      })
+    },
+    
     getLeyesLegislacion({commit, state},payload){
       commit('cargarFirebase',true)
       const listadoleyes = []
@@ -404,6 +495,7 @@ export default new Vuex.Store({
       auth.signOut()
       commit('nuevoUsuario',null)
       router.push({name:'Login'})
+      window.location.href = '/login'
     }
   },
   getters: {

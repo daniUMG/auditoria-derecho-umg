@@ -36,7 +36,7 @@
                         dark
                         style="text-transform: capitalize !important;"
                     >
-                        {{ item.tipo }}
+                        {{ item.tipo === 'usuario' ? 'Gerente' : item.tipo }}
                     </v-chip>
                 </template>
                 </v-data-table>

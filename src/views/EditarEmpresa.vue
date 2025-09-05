@@ -1,71 +1,90 @@
 <template>
   <v-layout>
-      <v-flex>
-          <!-- <h1>{{$route.params.id}}</h1> -->
-        <v-row>
-            <v-col>
-                <div>
-                    <form @submit.prevent="editarEmpresa(tablero)">
-                        <v-text-field
-                            v-model.trim="tablero.nombre"
-                            :counter="30"
-                            :error-messages="nombreErrors"
-                            label="Nombre Empresa"
-                            required
-                            @input="$v.tablero.nombre.$touch()"
-                            @blur="$v.tablero.nombre.$touch()"
-                        ></v-text-field>
+        <v-flex>
+            <!-- <h1>{{$route.params.id}}</h1> -->
+            <v-row>
+                <v-col>
+                    <div>
+                        <!-- <form @submit.prevent="editarEmpresa(tablero)"> -->
+                            <v-text-field
+                                v-model.trim="tablero.nombre"
+                                :counter="30"
+                                :error-messages="nombreErrors"
+                                label="Nombre Empresa"
+                                required
+                                @input="$v.tablero.nombre.$touch()"
+                                @blur="$v.tablero.nombre.$touch()"
+                            ></v-text-field>
 
-                        <v-textarea
-                            v-model.trim="tablero.descripcion"
-                            autocomplete="descripcion"
-                            label="Descripción"
-                            :error-messages="descripcionErrors"
-                            :counter="1530"
-                            required
-                            @input="$v.tablero.descripcion.$touch()"
-                            @blur="$v.tablero.descripcion.$touch()"
-                        ></v-textarea>
+                            <v-textarea
+                                v-model.trim="tablero.descripcion"
+                                autocomplete="descripcion"
+                                label="Descripción"
+                                :error-messages="descripcionErrors"
+                                :counter="1530"
+                                required
+                                @input="$v.tablero.descripcion.$touch()"
+                                @blur="$v.tablero.descripcion.$touch()"
+                            ></v-textarea>
 
-                        <v-text-field
-                            v-model.trim="tablero.region"
-                            :counter="15"
-                            :error-messages="regionErrors"
-                            label="Región"
-                            required
-                            @input="$v.tablero.nombre.$touch()"
-                            @blur="$v.tablero.nombre.$touch()"
-                        ></v-text-field>
+                            <v-text-field
+                                v-model.trim="tablero.region"
+                                :counter="15"
+                                :error-messages="regionErrors"
+                                label="Región"
+                                required
+                                @input="$v.tablero.nombre.$touch()"
+                                @blur="$v.tablero.nombre.$touch()"
+                            ></v-text-field>
 
-                        <label for="temaTablero">Tema Empresa</label><br>
-                        <input type="color" v-model="tablero.tema" required><br>
+                            <label for="temaTablero">Tema Empresa</label><br>
+                            <input type="color" v-model="tablero.tema" required><br>
 
-                        <v-select
-                            v-model="tablero.grupos"
-                            :items="grupos"
-                            item-value="id"
-                            item-text="nombre"
-                            attach
-                            chips
-                            label="Grupos con acceso:"
-                            multiple
-                            required
-                        ></v-select>
+                            <v-select
+                                v-model="tablero.grupos"
+                                :items="grupos"
+                                item-value="id"
+                                item-text="nombre"
+                                attach
+                                chips
+                                label="Grupos con acceso:"
+                                multiple
+                                required
+                            ></v-select>
 
-                        <v-btn
-                            class="mr-4 mt-4"
-                            type="submit"
-                            :loading="loading"
-                            :disabled="$v.tablero.$invalid || carga"
-                            @click="editarEmpresa(tablero)"
-                        >
-                            Guardar
-                        </v-btn>
-                    </form>
-                </div>
-            </v-col>
-        </v-row>
-      </v-flex>
+                            <v-btn
+                                class="mr-4 mt-4"
+                                type="submit"
+                                :loading="loading"
+                                :disabled="$v.tablero.$invalid || carga"
+                                @click="editarEmpresaLocal(tablero)"
+                            >
+                                Guardar
+                            </v-btn>
+                        <!-- </form> -->
+                    </div>
+                </v-col>
+            </v-row>
+        </v-flex>
+
+        <!-- Snackbar para notificaciones -->
+        <v-snackbar
+            v-model="snackbar.show"
+            :color="snackbar.color"
+            :timeout="3000"
+            bottom
+        >
+            {{ snackbar.message }}
+            <template v-slot:action="{ attrs }">
+                <v-btn
+                text
+                v-bind="attrs"
+                @click="snackbar.show = false"
+                >
+                Cerrar
+                </v-btn>
+            </template>
+        </v-snackbar>
   </v-layout>
 </template>
 
@@ -105,7 +124,12 @@ export default {
             { text: 'Asignacion', value: 'asignacion' },
             // { text: 'Acciones', value: 'accion', sortable: false }
         ],
-        mensajes: []
+        mensajes: [],
+        snackbar: {
+            show: false,
+            message: '',
+            color: 'success'
+        },
       }
     },
     mixins: [validationMixin],
@@ -156,6 +180,17 @@ export default {
     },
     methods: {
         ...mapActions(['getEmpresa','editarEmpresa','getGrupos']),
+        editarEmpresaLocal() {
+            this.editarEmpresa(this.tablero)
+            this.mostrarSnackbar('Empresa editada exitosamente', 'success')
+        },
+        mostrarSnackbar(mensaje, color = 'success') {
+            this.snackbar = {
+                show: true,
+                message: mensaje,
+                color: color
+            }
+        },
     },
     created() {
         this.getEmpresa(this.$route.params.id)

@@ -7,8 +7,10 @@ Vue.use(VueRouter)
 const routes = [
   {
     path: '/',
-    name: 'Home',
-    component: () => import('../views/Home.vue'),
+    // name: 'Home',
+    name: 'Empresas',
+    // component: () => import('../views/Home.vue'),
+    component: () => import('../views/Tablero.vue'),
     meta: {requiresAuth: true}
   },
   {
@@ -60,7 +62,7 @@ const routes = [
   },
   {
     path: '/legislacion/leyes/:id',
-    name: 'Tareas',
+    name: 'LeyesEmpresa',
     component: () => import('../views/Leyes.vue'),
     meta: {requiresAuth: true}
   },
@@ -105,6 +107,12 @@ const routes = [
     name: 'Reportes',
     component: () => import('../views/Reportes.vue'),
     meta: {requiresAuth: true}
+  },
+  {
+    path: '/reportes-adm',
+    name: 'ReportesAdmin',
+    component: () => import('../views/ReportesAdmin.vue'),
+    meta: {requiresAuth: true}
   }
 ]
 
@@ -119,7 +127,7 @@ router.beforeEach((to, from, next) => {
   if (to.matched.some(record => record.meta.requiresAuth)) {
     if (user) {
       next()
-    }else{
+    } else {
       next({name:'Login'})
     }
   } else {

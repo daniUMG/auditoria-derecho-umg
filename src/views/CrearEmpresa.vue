@@ -3,7 +3,7 @@
         <v-flex>
             <div class="ml-5 contain-crearCasos">
                 <h2>Crear Empresa</h2>
-                <form @submit.prevent="setEmpresa({nombre, descripcion, region, tema, grupos: arrayGrupos})">
+                <form @submit.prevent="setEmpresaLocal()">
                     <v-text-field
                         v-model.trim="nombre"
                         :counter="30"
@@ -56,6 +56,25 @@
                 </form>
             </div>
         </v-flex>
+
+        <!-- Snackbar para notificaciones -->
+        <v-snackbar
+            v-model="snackbar.show"
+            :color="snackbar.color"
+            :timeout="3000"
+            bottom
+        >
+        {{ snackbar.message }}
+        <template v-slot:action="{ attrs }">
+            <v-btn
+            text
+            v-bind="attrs"
+            @click="snackbar.show = false"
+            >
+            Cerrar
+            </v-btn>
+        </template>
+        </v-snackbar>
     </v-layout>
 </template>
 
@@ -86,7 +105,12 @@ export default {
             arrayGrupos: [],
             arrayGruposRules: [
                 v => !!v || 'Debe elegir al menos un grupo',
-            ]
+            ],
+            snackbar: {
+                show: false,
+                message: '',
+                color: 'success'
+            },
         }
     },
     computed: {
@@ -99,7 +123,18 @@ export default {
         arrayGrupos: [required]
     },
     methods: {
-        ...mapActions(['setEmpresa','getGrupos'])
+        ...mapActions(['setEmpresa','getGrupos']),
+        setEmpresaLocal() {
+            this.setEmpresa({nombre: this.nombre, descripcion: this.descripcion, region: this.region, tema: this.tema, grupos: this.arrayGrupos})
+            this.mostrarSnackbar('Empresa creada exitosamente', 'success')
+        },
+        mostrarSnackbar(mensaje, color = 'success') {
+            this.snackbar = {
+                show: true,
+                message: mensaje,
+                color: color
+            }
+        },
     },
     created(){
         this.getGrupos()

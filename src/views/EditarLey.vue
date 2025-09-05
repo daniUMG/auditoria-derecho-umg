@@ -162,7 +162,7 @@ export default {
                         // fecha: Date.now()
                     })
 
-                    this.$router.push({name: 'Tareas', params: {id: this.legislacionid}})
+                    this.$router.push({name: 'LeyesEmpresa', params: {id: this.legislacionid}})
                     this.savingForm = false
                 })
                 .catch(error => {
@@ -180,7 +180,7 @@ export default {
                     // fecha: Date.now()
                 })
 
-                this.$router.push({name: 'Tareas', params: {id: this.legislacionid}})
+                this.$router.push({name: 'LeyesEmpresa', params: {id: this.legislacionid}})
                 this.savingForm = false
             }
 

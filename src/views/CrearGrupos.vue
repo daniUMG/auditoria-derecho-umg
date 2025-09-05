@@ -51,7 +51,7 @@ export default {
             descripcion: '',
             descripcionRules: [
                 v => !!v || 'La descripción es requerida',
-                v => (v && v.length <= 25) || 'La descripción no puede tener más de 1530 caracteres'
+                v => (v && v.length <= 1530) || 'La descripción no puede tener más de 1530 caracteres'
             ],
             users: [],
             arrayUsuarios: [],

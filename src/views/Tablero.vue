@@ -25,8 +25,8 @@
 
             <v-card style="background: transparent; box-shadow: none;" v-else>
             <v-row style="background: transparent;">
-                <v-col v-for="(item, index) in arrayFiltrado" :key="index" class="list-group-item" col="6" xs="12" sm="12" md="4" lg="3" xl="2" style="border: 1px solid transparent !important; background: transparent !important;">
-                    <v-card class="mx-auto collection-list" dark max-width="400" :style='`border-radius: initial; border-top: 5px ${item.tema} solid !important; background-color: #fff; color: #3F454C;`'>
+                <v-col v-for="(item, index) in arrayFiltrado" :key="index" class="list-group-item" col="6" xs="12" sm="12" md="6" lg="6" xl="2" style="border: 1px solid transparent !important; background: transparent !important;">
+                    <v-card class="mx-auto collection-list" dark max-width="400" min-width="400" :style='`border-radius: initial; border-top: 5px ${item.tema} solid !important; background-color: #fff; color: #3F454C;`'>
                         <v-card-title class="collection-title">
                             <span>
                                 <!-- <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" class="icon-button"><path d="M0 0h24v24H0z" fill="none"/><path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z" :fill="`${item.tema}`"/></svg> -->
@@ -57,7 +57,7 @@
                                 <v-chip color="secondary" style="color: rgb(57, 162, 227) !important; background: rgb(230, 243, 251) !important; font-size: 11px; position: absolute; left: 0px; height: 22px; bottom: 3px;">
                                     {{item.region}}
                                 </v-chip>
-                                <span class="subheading mr-1">
+                                <span class="subheading mr-1" v-if="usuario.tipo === 'admin' || usuario.tipo === 'usuario'">
                                     <router-link :to="{name: 'EditarEmpresa', params: {id: item.id}}">
                                         <v-btn fab dark small color="secondary">
                                         <v-icon dark>
@@ -67,7 +67,7 @@
                                     </router-link>
                                 </span>
                                 <span class="subheading">
-                                    <router-link :to="{name: 'Tareas', params: {id: item.id}}">
+                                    <router-link :to="{name: 'LeyesEmpresa', params: {id: item.id}}">
                                         <v-btn fab dark small color="secondary">
                                         <v-icon dark>
                                             fas fa fa-eye

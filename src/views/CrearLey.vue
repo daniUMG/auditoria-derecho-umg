@@ -167,7 +167,7 @@ export default {
                     fecha: Date.now()
                 })
 
-                this.$router.push({name: 'Tareas', params: {id: this.$route.params.id}})
+                this.$router.push({name: 'LeyesEmpresa', params: {id: this.$route.params.id}})
                 this.savingForm = false
             })
             .catch(error => {

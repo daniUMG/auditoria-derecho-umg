@@ -2,7 +2,7 @@
     <v-layout>
         <v-flex>
             <div class="mt-4">
-                <h1>Reportes</h1>
+                <h1>Todas los reportes</h1>
                 <v-card>
                     <v-card-title>
                     <v-text-field
@@ -15,7 +15,7 @@
                     </v-card-title>
                     <v-data-table
                         :headers="headers"
-                        :items="usuarioReportes"
+                        :items="listadoReportes"
                         :search="search"
                     >
                         <template v-slot:[`item.rEmpresa`]="{item}">
@@ -64,10 +64,10 @@ export default {
     components: {
     },
     computed: {
-        ...mapState(['usuarioReportes'])
+        ...mapState(['listadoReportes'])
     },
     methods: {
-        ...mapActions(['getUsuarioReportes']),
+        ...mapActions(['getListadoReportes']),
         generarReporte(payload) {
             this.documento = payload.documento
             this.resumen = payload.resumen
@@ -925,7 +925,7 @@ export default {
         },
     },
     created() {
-        this.getUsuarioReportes()  
+        this.getListadoReportes()  
     }
 }
 </script>

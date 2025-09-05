@@ -425,8 +425,8 @@
               <div v-for="capitulo in titulo.capitulos" :key="capitulo.id" class="ml-4 mb-4">
                 <h4 class="blue--text mb-2">CAPÍTULO {{ capitulo.numero }} - {{ capitulo.nombre }}</h4>
                 
-                <div v-for="articulo in capitulo.articulos" :key="articulo.id" class="ml-4 mb-3">
-                  <h5 class="green--text mb-1">{{ articulo.nombre }}</h5>
+                <div v-for="(articulo, index) in capitulo.articulos" :key="articulo.id" class="ml-4 mb-3">
+                  <h5 class="green--text mb-1">ARTÍCULO {{ index + 1 }} - {{ articulo.nombre }}</h5>
                   
                   <!-- Mostrar elementos intercalados -->
                   <div v-for="(elemento, index) in articulo.elementos" :key="elemento.id" class="mb-1">
