@@ -69,6 +69,12 @@
                             <div class="blue--text subheading font-weight-bold">
                                 Usuarios que pertenecen al Grupo:
                             </div>
+                            <router-link :to="{name: 'EditarGrupo', params: {id: selected.id}}">
+                                <v-btn fab dark small color="secondary">
+                                    <v-icon>fas fa-pen</v-icon>
+                                </v-btn>
+                            </router-link>
+                            <!-- </v-avatar> -->
                         </v-card-text>
                         <v-simple-table
                             fixed-header

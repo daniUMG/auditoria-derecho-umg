@@ -103,6 +103,12 @@ const routes = [
     meta: {requiresAuth: true}
   },
   {
+    path: '/editar-grupo/:id',
+    name: 'EditarGrupo',
+    component: () => import('../views/EditarGrupo.vue'),
+    meta: {requiresAuth: true}
+  },
+  {
     path: '/reportes',
     name: 'Reportes',
     component: () => import('../views/Reportes.vue'),

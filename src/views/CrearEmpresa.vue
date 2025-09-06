@@ -34,6 +34,15 @@
                         required
                     ></v-select>
 
+                    <v-select
+                        v-model="leyAgregada"
+                        :items="leyesAgregadas"
+                        item-value="id"
+                        item-text="nombre"
+                        label="Agregar Ley:"
+                        chips
+                    ></v-select>
+
                     <v-text-field
                         v-model.trim="region"
                         :counter="17"
@@ -81,6 +90,7 @@
 <script>
 import { mapActions, mapState } from "vuex"
 import { required, maxLength } from 'vuelidate/lib/validators'
+import {db} from '../firebase'
 
 export default {
     name: 'CrearTablero',
@@ -111,6 +121,8 @@ export default {
                 message: '',
                 color: 'success'
             },
+            leyAgregada: {id: '', nombre: ''},
+            leyesAgregadas: [],
         }
     },
     computed: {
@@ -125,7 +137,8 @@ export default {
     methods: {
         ...mapActions(['setEmpresa','getGrupos']),
         setEmpresaLocal() {
-            this.setEmpresa({nombre: this.nombre, descripcion: this.descripcion, region: this.region, tema: this.tema, grupos: this.arrayGrupos})
+            // console.log(this.leyAgregada)
+            this.setEmpresa({nombre: this.nombre, descripcion: this.descripcion, region: this.region, tema: this.tema, grupos: this.arrayGrupos, leyAgregada: this.leyAgregada})
             this.mostrarSnackbar('Empresa creada exitosamente', 'success')
         },
         mostrarSnackbar(mensaje, color = 'success') {
@@ -138,6 +151,24 @@ export default {
     },
     created(){
         this.getGrupos()
+
+        this.leyesAgregadas = []
+        this.leyAgregada = {}
+        db.collection('leyes').get()
+        .then(docsLeyes => {
+            var arrayLeyesCiclo = []
+            docsLeyes.forEach(doc => {
+                if(doc.data().documento && doc.data().documento.numeroLey) {
+                    if(!arrayLeyesCiclo.includes(doc.data().documento.numeroLey)) {
+                        arrayLeyesCiclo.push(doc.data().documento.numeroLey)
+                        this.leyesAgregadas.push({
+                            id: doc.id,
+                            nombre: doc.data().documento && doc.data().documento.numeroLey ? doc.data().documento.numeroLey : ''
+                        })
+                    }
+                }
+            })
+        })
     }
 }
 </script>

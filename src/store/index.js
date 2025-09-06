@@ -147,6 +147,18 @@ export default new Vuex.Store({
       }).catch(error => console.log(error))
       .then(doc => {
         // console.log(payload)
+        
+        if(payload.leyAgregada) {
+          db.collection('leyes').doc(payload.leyAgregada).get()
+          .then(docLey => {
+            if(docLey.exists) {
+              var agregarLey = docLey.data()
+              agregarLey.empresa = doc.id
+              db.collection('leyes').add(agregarLey)
+            }
+          })
+        }
+
         commit('cargarFirebase',false)
         commit('setLoading',false)
         router.push({name:'Empresas'})
@@ -323,6 +335,23 @@ export default new Vuex.Store({
         hour: Date.now('h:i A')
       }).catch(error => console.log(error))
       .then(doc => {
+        // console.log(payload)
+        commit('cargarFirebase',false)
+        commit('setLoading',false)
+        router.push({name:'Grupos'})
+      })
+    },
+    editGrupo({commit,state},payload){
+      commit('cargarFirebase', true)
+      commit('setLoading',true)
+      db.collection('grupos').doc(payload.idgrupo).update({
+        nombre: payload.nombre,
+        descripcion: payload.descripcion,
+        usuarios: payload.users,
+        date: Date.now(),
+        hour: Date.now('h:i A')
+      }).catch(error => console.log(error))
+      .then(() => {
         // console.log(payload)
         commit('cargarFirebase',false)
         commit('setLoading',false)
