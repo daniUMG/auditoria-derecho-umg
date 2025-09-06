@@ -96,7 +96,7 @@ export default {
             password: '',
             tipo: {text: 'Usuario', value: 'usuario'},
             itemsTipos: [
-                {text: 'Usuario', value: 'usuario'},
+                {text: 'Gerente', value: 'usuario'},
                 {text: 'Auditor', value: 'auditor'},
                 // {text: 'Encargado'},
                 {text: 'Administrador', value: 'admin'}

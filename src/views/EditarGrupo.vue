@@ -3,7 +3,7 @@
         <v-flex>
             <div class="ml-5 contain-crearCasos">
                 <h2>Editar Grupo</h2>
-                <v-form @submit.prevent="editGrupo({idgrupo: this.$route.params.id, nombre, descripcion, users})">
+                <v-form @submit.prevent="editGrupo({idgrupo: $route.params.id, nombre, descripcion, users})">
                     <v-text-field v-model.trim="nombre" :counter="25" :rules="nombreRules" label="Nombre:" placeholder="Ingrese el nombre del Grupo..." required></v-text-field>
                     <v-textarea
                         v-model.trim="descripcion"
