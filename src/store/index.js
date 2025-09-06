@@ -407,6 +407,8 @@ export default new Vuex.Store({
               ley.rEmpresa = doc.data().tablero.region
               ley.fecha = doc.data().fecha ? moment(doc.data().fecha).format('lll') : '-'
               ley.fevaluacion = doc.data().documento.fechaEvaluacion
+              ley.gerenteEmpresa = doc.data().gerenteEmpresa
+              ley.auditadapor = doc.data().auditadapor
               // ley.fecha_auditoria = doc.data().fecha_auditoria ? moment(doc.data().fecha_auditoria).format('lll') : '-'
               // ley.auditada_por = doc.data().auditada_por ? doc.data().auditada_por : '-'
               listadoReportes.push(ley)
@@ -451,6 +453,8 @@ export default new Vuex.Store({
                       ley.rEmpresa = doc.data().tablero.region
                       ley.fecha = doc.data().fecha ? moment(doc.data().fecha).format('lll') : '-'
                       ley.fevaluacion = doc.data().documento.fechaEvaluacion
+                      ley.gerenteEmpresa = doc.data().gerenteEmpresa
+                      ley.auditadapor = doc.data().auditadapor
                       // ley.fecha_auditoria = doc.data().fecha_auditoria ? moment(doc.data().fecha_auditoria).format('lll') : '-'
                       // ley.auditada_por = doc.data().auditada_por ? doc.data().auditada_por : '-'
                       listadoReportes.push(ley)
