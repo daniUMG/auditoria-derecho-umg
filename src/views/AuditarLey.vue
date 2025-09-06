@@ -348,7 +348,7 @@
             outlined
             class="ml-3"
             @click="generarReporte"
-            :disabled="progreso.calificados === 0"
+            :disabled="progreso.porcentaje < 100"
           >
             <v-icon left>mdi-file-chart</v-icon>
             Generar Reporte
